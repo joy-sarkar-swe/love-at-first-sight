@@ -1,26 +1,283 @@
 @import "tailwindcss";
+@source "../app";
+@source "../components";
+@source "../lib";
+@source "../hooks";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Love at First Sight — Aldren × Club 54 fusion.
+ * Cinematic dark burgundy #67242B canvas. Bold upright Inter Tight for display.
+ * Geist Mono for numerals, labels, and hours. Zero italic. Zero serif.
+ */
 
 @theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* LAFS palette */
+  --color-burgundy: var(--burgundy);
+  --color-burgundy-deep: var(--burgundy-deep);
+  --color-burgundy-tint: var(--burgundy-tint);
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-gold: var(--gold);
+  --color-muted-cream: var(--muted-cream);
+
+  /* Legacy aliases so any lingering utilities keep working */
+  --color-linen: var(--burgundy-tint);
+  --color-charcoal: var(--cream);
+  --color-warm-gray: var(--muted-cream);
+  --color-stone: var(--muted-cream);
+  --color-wine: var(--burgundy-deep);
+  --color-champagne: var(--paper);
+  --color-blush: var(--burgundy-tint);
+  --color-sage: var(--gold);
+  --color-warm-red: #C43030;
+
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-sans: var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.5rem;
+
+  /* Raw palette */
+  --burgundy: #67242B;
+  --burgundy-deep: #4A181D;
+  --burgundy-tint: #7A3239;
+  --cream: #F4EFE7;
+  --muted-cream: rgba(244, 239, 231, 0.62);
+  --paper: #EFE8DC;
+  --ink: #1A1614;
+  --gold: #C9A961;
+
+  /* Semantic mapping — burgundy dominates */
+  --background: var(--burgundy);
+  --foreground: var(--cream);
+  --card: var(--burgundy);
+  --card-foreground: var(--cream);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--cream);
+  --primary-foreground: var(--burgundy);
+  --secondary: var(--burgundy-tint);
+  --secondary-foreground: var(--cream);
+  --muted: var(--burgundy-tint);
+  --muted-foreground: var(--muted-cream);
+  --accent: var(--gold);
+  --accent-foreground: var(--burgundy);
+  --destructive: #C43030;
+  --destructive-foreground: var(--cream);
+  --border: rgba(244, 239, 231, 0.14);
+  --input: rgba(244, 239, 231, 0.24);
+  --ring: var(--gold);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --duration-instant: 100ms;
+  --duration-fast: 160ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-reveal: 700ms;
+  --duration-cinematic: 1200ms;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-burgundy);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+    font-weight: 400;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.035em;
+    line-height: 0.92;
+    font-weight: 700;
+    font-style: normal;
+    color: inherit;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-cream);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: normal;
+}
+@utility font-script {
+  font-family: var(--font-script);
+  font-weight: 700;
+  font-style: normal;
+}
+@utility font-body {
+  font-family: var(--font-body);
+}
+@utility font-mono {
+  font-family: var(--font-mono);
+}
+
+@utility reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+@utility reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@utility reveal-clip {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 900ms var(--ease-out);
+}
+@utility reveal-clip-visible {
+  clip-path: inset(0 0 0 0);
+}
+
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--color-muted-cream);
+}
+
+@utility num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted-cream);
+}
+
+@utility text-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 9vw, 8.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  font-weight: 700;
+}
+@utility text-stack {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7.5vw, 6.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  font-weight: 700;
+}
+@utility text-display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.5vw + 0.5rem, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+@utility text-display-md {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw + 0.5rem, 2.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 1360px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 3rem;
+  }
+}
+
+@utility hairline {
+  border-color: rgba(244, 239, 231, 0.15);
+}
+
+@utility underline-sweep {
+  position: relative;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ken-burns {
+  from { transform: scale(1.02); }
+  to { transform: scale(1.1); }
+}
+
+/* Candlelit custom cursor — hide the native cursor when active */
+@media (hover: hover) and (pointer: fine) {
+  .cursor-none-root, .cursor-none-root * {
+    cursor: none !important;
+  }
+}
+
+/* Hover: subtle image zoom + cream ring on interactive images */
+@utility hover-warm {
+  transition: transform 500ms var(--ease-out), filter 500ms var(--ease-out);
+  &:hover { transform: scale(1.02); filter: brightness(1.05) saturate(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
