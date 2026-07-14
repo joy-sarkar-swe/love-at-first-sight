@@ -80,7 +80,7 @@ function BookingFlow() {
         params.set(key, val);
       }
     });
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const back = () => {
@@ -176,7 +176,7 @@ function StepHeadline({ step, lines }: { step: string; lines: string[] }) {
   return (
     <div>
       <div className="label">{step}</div>
-      <h2 className="mt-8 text-stack">
+      <h2 className="mt-8 text-stack break-words">
         {lines.map((l, i) => (<span key={i} className="block">{l}</span>))}
       </h2>
     </div>
@@ -186,11 +186,11 @@ function StepHeadline({ step, lines }: { step: string; lines: string[] }) {
 function OccasionStep({ selected, onPick }: { selected?: string; onPick: (id: string) => void }) {
   return (
     <Reveal>
-      <div className="grid gap-8 md:grid-cols-12 md:gap-x-16">
-        <div className="md:col-span-5 md:pr-4">
+      <div className="grid gap-8 grid-cols-1 lg:grid-cols-12 lg:gap-x-16">
+        <div className="col-span-1 lg:col-span-6 lg:pr-4">
           <StepHeadline step="step one" lines={["what are", "we", "celebrating?"]} />
         </div>
-        <div className="md:col-span-7">
+        <div className="col-span-1 lg:col-span-6">
           <ul className="border-t border-cream/15">
             {occasions.map((o, i) => {
               const active = selected === o.id;
@@ -219,11 +219,11 @@ function OccasionStep({ selected, onPick }: { selected?: string; onPick: (id: st
 function ChefStep({ selected, onPick }: { selected?: string; onPick: (slug: string) => void }) {
   return (
     <Reveal>
-      <div className="grid gap-12 md:grid-cols-12 md:gap-x-12">
-        <div className="md:col-span-5">
+      <div className="grid gap-12 grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
+        <div className="col-span-1 lg:col-span-6">
           <StepHeadline step="step two" lines={["choose", "your chef."]} />
         </div>
-        <div className="md:col-span-7">
+        <div className="col-span-1 lg:col-span-6">
           <div className="grid gap-x-6 gap-y-10 grid-cols-1 sm:grid-cols-2">
             {chefs.map((c, i) => (
               <button key={c.slug} onClick={() => onPick(c.slug)} className="group text-left cursor-pointer">
@@ -266,11 +266,11 @@ function PackageStep({ chefSlug, onPick, onChooseChef }: { chefSlug?: string; on
   }
   return (
     <Reveal>
-      <div className="grid gap-12 md:grid-cols-12 md:gap-x-12">
-        <div className="md:col-span-5">
+      <div className="grid gap-12 grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
+        <div className="col-span-1 lg:col-span-6">
           <StepHeadline step="step three" lines={["choose", "a menu with", chef.name.split(" ")[0].toLowerCase() + "."]} />
         </div>
-        <div className="md:col-span-7">
+        <div className="col-span-1 lg:col-span-6">
           <ul className="border-t border-cream/15">
             {chef.packages.map((p, i) => (
               <li key={p.id} className="border-b border-cream/15">
@@ -301,11 +301,11 @@ function WhenStep({ date, time, onSubmit }: { date?: string; time?: string; onSu
   const [pickedTime, setPickedTime] = useState<string>(time ?? "19:00");
   return (
     <Reveal>
-      <div className="grid gap-12 md:grid-cols-12 md:gap-x-12">
-        <div className="md:col-span-5">
+      <div className="grid gap-12 grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
+        <div className="col-span-1 lg:col-span-6">
           <StepHeadline step="step four" lines={["when", "shall they", "arrive?"]} />
         </div>
-        <div className="md:col-span-7">
+        <div className="col-span-1 lg:col-span-6">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -423,8 +423,8 @@ function PaymentStep({ chef, pkg, occasionLabel, date, time, onSuccess }: {
 
   return (
     <Reveal>
-      <div className="grid gap-12 md:grid-cols-12 md:gap-x-12">
-        <div className="md:col-span-5 md:sticky md:top-24 self-start">
+      <div className="grid gap-12 grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
+        <div className="col-span-1 lg:col-span-6 lg:sticky lg:top-24 self-start">
           <StepHeadline step={`step ${totalWithoutChef(chef) ? "four" : "five"}`} lines={["how would you", "like to", "settle?"]} />
 
           {/* Order summary */}
@@ -452,7 +452,7 @@ function PaymentStep({ chef, pkg, occasionLabel, date, time, onSuccess }: {
           </div>
         </div>
 
-        <div className="md:col-span-7">
+        <div className="col-span-1 lg:col-span-6">
           <form onSubmit={handleSubmit} className="border-t border-cream/15 pt-10 space-y-10">
             <div>
               <div className="label text-cream/60">Payment method</div>

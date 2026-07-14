@@ -22,7 +22,7 @@ export default function Contact() {
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-x-16">
           <div className="lg:col-span-5">
             <Reveal>
-              <div className="space-y-4 border-t border-cream/15 pt-6">
+              <div className="border-t border-cream/15 pt-6">
                 <ContactRow n="01" label="reserve" value="hello@loveatfirstsight.co" href="mailto:hello@loveatfirstsight.co" />
                 <ContactRow n="02" label="apply to cook" value="chefs@loveatfirstsight.co" href="mailto:chefs@loveatfirstsight.co" />
                 <ContactRow n="03" label="press" value="press@loveatfirstsight.co" href="mailto:press@loveatfirstsight.co" />
@@ -34,7 +34,7 @@ export default function Contact() {
           <div className="lg:col-span-7">
             <Reveal delay={80}>
               {sent ? (
-                <div className="border-t border-cream/15 pt-12">
+                <div className="border-t border-cream/15 pt-6">
                   <div className="label">thank you</div>
                   <h2 className="mt-8 text-stack">
                     <span className="block">got it.</span>
@@ -44,12 +44,44 @@ export default function Contact() {
               ) : (
                 <form
                   onSubmit={(e) => { e.preventDefault(); setSent(true); }}
-                  className="border-t border-cream/15 pt-12 space-y-10 max-w-xl"
+                  className="border-t border-cream/15 pt-6 max-w-xl"
                 >
-                  <Field label="your name" name="name" required />
-                  <Field label="email" name="email" type="email" required />
-                  <Field label="what's on your mind?" name="message" textarea required />
-                  <div>
+                  <div className="border-b border-cream/15 h-[84px] flex flex-col justify-center">
+                    <label className="block w-full">
+                      <div className="label">your name</div>
+                      <input
+                        type="text"
+                        name="name"
+                        required
+                        className="mt-1.5 w-full border-0 bg-transparent px-0 py-0.5 text-cream placeholder:text-cream/40 focus:outline-none"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="border-b border-cream/15 h-[84px] flex flex-col justify-center">
+                    <label className="block w-full">
+                      <div className="label">email</div>
+                      <input
+                        type="email"
+                        name="email"
+                        required
+                        className="mt-1.5 w-full border-0 bg-transparent px-0 py-0.5 text-cream placeholder:text-cream/40 focus:outline-none"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="border-b border-cream/15 h-[168px] flex flex-col justify-center py-4">
+                    <label className="block w-full h-full flex flex-col">
+                      <div className="label">what's on your mind?</div>
+                      <textarea
+                        name="message"
+                        required
+                        className="mt-2 w-full flex-1 border-0 bg-transparent px-0 py-1 text-cream placeholder:text-cream/40 focus:outline-none resize-none"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="mt-8">
                     <Button type="submit" size="lg">send message</Button>
                   </div>
                 </form>
@@ -64,11 +96,13 @@ export default function Contact() {
 
 function ContactRow({ n, label, value, href }: { n: string; label: string; value: string; href?: string }) {
   const inner = (
-    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-4 md:gap-6 border-b border-cream/15 py-5">
-      <div className="num shrink-0">{n}</div>
-      <div className="min-w-0">
-        <div className="label">{label}</div>
-        <div className="mt-1 font-display font-bold text-lg md:text-xl lowercase text-cream truncate">{value}</div>
+    <div className="border-b border-cream/15 h-[84px] flex flex-col justify-center">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-4 md:gap-6">
+        <div className="num shrink-0">{n}</div>
+        <div className="min-w-0">
+          <div className="label">{label}</div>
+          <div className="mt-1 font-display font-bold text-lg md:text-xl lowercase text-cream truncate">{value}</div>
+        </div>
       </div>
     </div>
   );
@@ -76,20 +110,5 @@ function ContactRow({ n, label, value, href }: { n: string; label: string; value
     <a href={href} className="block hover:text-cream transition-colors">{inner}</a>
   ) : (
     <div>{inner}</div>
-  );
-}
-
-function Field({ label, name, type = "text", textarea, required }: { label: string; name: string; type?: string; textarea?: boolean; required?: boolean }) {
-  return (
-    <label className="block">
-      <div className="label">{label}</div>
-      {textarea ? (
-        <textarea name={name} required={required} rows={5}
-          className="mt-3 w-full border-0 border-b border-cream/25 bg-transparent px-0 py-3 text-cream placeholder:text-cream/40 focus:border-cream focus:outline-none" />
-      ) : (
-        <input type={type} name={name} required={required}
-          className="mt-3 w-full border-0 border-b border-cream/25 bg-transparent px-0 py-3 text-cream placeholder:text-cream/40 focus:border-cream focus:outline-none" />
-      )}
-    </label>
   );
 }

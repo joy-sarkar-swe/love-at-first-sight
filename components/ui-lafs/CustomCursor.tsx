@@ -15,6 +15,7 @@ export function CustomCursor() {
   const sy = useSpring(y, { stiffness: 500, damping: 40, mass: 0.4 });
   const [enabled, setEnabled] = useState(false);
   const [hover, setHover] = useState(false);
+  const [insideModal, setInsideModal] = useState(false);
   const raf = useRef<number | null>(null);
 
   useEffect(() => {
@@ -34,6 +35,9 @@ export function CustomCursor() {
       const t = e.target as HTMLElement | null;
       const isInteractive = !!t?.closest("a, button, [role=button], input, textarea, select, [data-cursor='hover']");
       setHover(isInteractive);
+
+      const inside = !!t?.closest("[role=dialog], .bg-cream, .bg-paper");
+      setInsideModal(inside);
     };
     window.addEventListener("mousemove", onMove, { passive: true });
     return () => {
@@ -51,7 +55,9 @@ export function CustomCursor() {
       <motion.div
         aria-hidden
         style={{ x: sx, y: sy }}
-        className="pointer-events-none fixed left-0 top-0 z-[100] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
+        className={`pointer-events-none fixed left-0 top-0 z-[100] -translate-x-1/2 -translate-y-1/2 ${
+          insideModal ? "" : "mix-blend-screen"
+        }`}
       >
         <motion.div
           animate={{
@@ -61,8 +67,9 @@ export function CustomCursor() {
           transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
           className="h-10 w-10 rounded-full"
           style={{
-            background:
-              "radial-gradient(closest-side, rgba(244,239,231,0.55), rgba(201,169,97,0.18) 55%, transparent 75%)",
+            background: insideModal
+              ? "radial-gradient(closest-side, rgba(103, 36, 43, 0.25), rgba(103, 36, 43, 0.08) 55%, transparent 75%)"
+              : "radial-gradient(closest-side, rgba(244,239,231,0.55), rgba(201,169,97,0.18) 55%, transparent 75%)",
             filter: "blur(2px)",
           }}
         />
@@ -77,7 +84,14 @@ export function CustomCursor() {
         <motion.div
           animate={{ scale: hover ? 0.6 : 1 }}
           transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-          className="h-[6px] w-[6px] rounded-full bg-cream shadow-[0_0_12px_rgba(244,239,231,0.9)]"
+          className={`h-[6px] w-[6px] rounded-full transition-colors duration-200 ${
+            insideModal ? "bg-burgundy" : "bg-cream"
+          }`}
+          style={{
+            boxShadow: insideModal
+              ? "0 0 12px rgba(103, 36, 43, 0.9)"
+              : "0 0 12px rgba(244, 239, 231, 0.9)"
+          }}
         />
       </motion.div>
     </>

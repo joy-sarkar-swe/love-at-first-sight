@@ -59,8 +59,8 @@ export default function OurStory() {
 
       {beats.map((b, i) => (
         <Section key={b.n} tone={i % 2 === 0 ? "burgundy" : "burgundy-deep"}>
-          <div className="grid gap-12 md:grid-cols-12 md:gap-x-16 items-start">
-            <div className="md:col-span-4">
+          <div className="grid gap-12 grid-cols-1 lg:grid-cols-12 lg:gap-x-16 items-start">
+            <div className="col-span-1 lg:col-span-6">
               <Reveal>
                 <div className="label">{b.n} · {b.label}</div>
                 <h2 className="mt-8 text-stack">
@@ -70,14 +70,14 @@ export default function OurStory() {
                 </h2>
               </Reveal>
             </div>
-            <div className="md:col-span-4 md:col-start-6">
+            <div className="col-span-1 lg:col-span-3 lg:col-start-7">
               <Reveal delay={100}>
                 <div className="space-y-6 text-[16px] leading-[1.75] text-cream/80 max-w-lg">
                   {b.body.map((p, k) => (<p key={k}>{p}</p>))}
                 </div>
               </Reveal>
             </div>
-            <div className="md:col-span-3 md:col-start-10 mt-6 md:mt-0">
+            <div className="col-span-1 lg:col-span-3 lg:col-start-10 mt-6 lg:mt-0">
               <RevealImage delay={180}>
                 <div className="aspect-[3/4] overflow-hidden">
                   <img src={b.image} alt="" className="h-full w-full object-cover" />
