@@ -59,8 +59,8 @@ export function Footer() {
           <div className="truncate">
             © {new Date().getFullYear()} Love at First Sight
             <sup className="ml-1 text-[9px] tracking-[0.14em]">℠</sup>
-            <span className="mx-3 text-cream/25">·</span>
-            <span className="text-cream/60">made for the deeply in love</span>
+            {/* <span className="mx-3 text-cream/25">·</span> */}
+            {/* <span className="text-cream/60">made for the deeply in love</span> */}
           </div>
           <div className="shrink-0 text-cream/60">a marketplace, not a restaurant</div>
         </div>

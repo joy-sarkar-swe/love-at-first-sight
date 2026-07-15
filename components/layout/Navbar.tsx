@@ -59,7 +59,7 @@ export function Navbar() {
           <img
             src="/logo.webp"
             alt="Love at First Sight"
-            className="h-12 md:h-14 w-auto object-contain select-none"
+            className="h-12 md:h-18 w-auto object-contain select-none"
             draggable={false}
           />
         </Link>
