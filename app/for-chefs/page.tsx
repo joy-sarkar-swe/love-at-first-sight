@@ -2,36 +2,67 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, CreditCard, Lock, Sparkles } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { CinematicHero, Reveal, Section } from "@/components/ui-lafs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const IMG = (id: string, w = 1800) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+const IMG = (id: string, w = 1800) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
-const HERO = IMG("photo-1577219491135-ce391730fb2c", 2200);
+const HERO = IMG("photo-1556909114-f6e7ad7d3136", 2200);
+
+const benefits = [
+  {
+    n: "01",
+    t: "Set your own prices",
+    b: "You decide what your time and talent are worth. Set package prices that reflect your experience.",
+  },
+  {
+    n: "02",
+    t: "Build your reputation",
+    b: "Every booking builds your profile with real guest reviews. The better you cook, the more you're discovered.",
+  },
+  {
+    n: "03",
+    t: "We handle the rest",
+    b: "Payments, scheduling, and guest communication all happen through the platform. You focus on the food.",
+  },
+];
 
 const steps = [
-  { n: "01", t: "apply to cook", b: "Tell us about your kitchen history, your cuisine, and the menus you love to cook. We review every application within 48 hours." },
-  { n: "02", t: "design your profile", b: "Build your menus, set your prices, and share the photos of your food. You have total control over your availability." },
-  { n: "03", t: "receive bookings", b: "Guests browse, choose your menu, and book. We hold payment in escrow immediately — you cook with complete peace of mind." },
-  { n: "04", t: "cook and get paid", b: "Arrive, cook, clean up. Payment is released to your bank account 48 hours after the dinner is complete." },
+  { n: "01", t: "Apply", b: "Tell us about your cuisine, your experience, and your style." },
+  { n: "02", t: "Get approved", b: "We review every application to maintain quality for guests." },
+  { n: "03", t: "Publish your gigs", b: "Create packages with your menus, pricing, and availability." },
+  { n: "04", t: "Start cooking", b: "Guests book you directly. You get paid after every dinner." },
 ];
 
 const testimonials = [
   {
-    quote: "I've cooked in Michelin kitchens for ten years. On the platform, I set my own hours, cook my own food, and talk directly to the people eating it. It has given me my craft back.",
-    name: "Chef Elena Moretti",
-    role: "Modern Italian · New York",
+    quote:
+      "I set my own hours, cook my own menus, and get paid within 48 hours of every dinner. It's the freedom I couldn't find in restaurant work.",
+    name: "Elena M.",
+    role: "Italian · New York",
   },
   {
-    quote: "We spent years looking for a private chef platform that cared about the food. Love at First Sight handles all the booking logistics, so I can focus entirely on the menu.",
-    name: "Chef Jacob Vance",
-    role: "French Modern · San Francisco",
+    quote:
+      "The platform brought me guests who actually cared about my cuisine. I've built a following I never had cooking in someone else's kitchen.",
+    name: "Amara O.",
+    role: "Modern Nigerian · London",
+  },
+  {
+    quote: "Everything I need — bookings, payments, reviews — in one place. I just show up and cook.",
+    name: "Leon P.",
+    role: "Modern Korean · Seoul",
   },
 ];
 
@@ -43,54 +74,81 @@ export default function ForChefs() {
     <>
       <CinematicHero
         image={HERO}
-        badge="For Chefs · Join the Roster"
-        headline={"Your food.\nYour hours.\nYour kitchen."}
-        caption="A platform for professional chefs who want to cook their own food on their own terms. We handle the bookings, payment, and support — you cook."
+        badge="For Private Chefs"
+        headline={"Your kitchen.\nYour menu.\nYour clients."}
+        caption="Join a marketplace built for independent chefs. Set your own prices, publish your own menus, and connect with guests who value your craft."
         height="compact"
       >
         <button
           type="button"
-          onClick={() => { setSubmitted(false); setOpen(true); }}
-          className="group/cta relative inline-flex h-[44px] cursor-pointer items-center gap-2.5 rounded-[16px] bg-cream text-burgundy border border-cream shadow-[0_14px_36px_-14px_rgba(0,0,0,0.55)] px-1.5 pr-4 text-[13px] font-medium tracking-tight transition-all duration-200 hover:bg-[#F0E8DE] hover:text-[#1A1614] hover:border-[#F0E8DE] active:scale-[0.97]"
+          onClick={() => {
+            setSubmitted(false);
+            setOpen(true);
+          }}
+          className="group/cta inline-flex h-[46px] cursor-pointer items-center gap-2.5 rounded-[16px] bg-cream text-burgundy border border-cream px-1.5 pr-5 text-[13px] font-medium tracking-tight transition-all duration-200 hover:bg-[#F0E8DE] active:scale-[0.97]"
         >
-          <span className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[12px] bg-burgundy text-cream">
-            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden className="transition-transform duration-200 group-hover/cta:translate-x-0.5">
-              <path d="M1 5H13M13 5L9 1M13 5L9 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          <span className="inline-flex h-[36px] w-[36px] items-center justify-center rounded-[12px] bg-burgundy text-cream">
+            <svg
+              width="14"
+              height="10"
+              viewBox="0 0 14 10"
+              fill="none"
+              aria-hidden
+              className="transition-transform duration-200 group-hover/cta:translate-x-0.5"
+            >
+              <path
+                d="M1 5H13M13 5L9 1M13 5L9 9"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </span>
-          <span>Apply Now</span>
+          <span>Apply to cook</span>
         </button>
       </CinematicHero>
 
-      {/* N°01 — The model */}
-      <Section tone="burgundy">
-        <div className="grid gap-12 md:grid-cols-12 md:gap-x-16 items-start">
+      {/* N°01 — Why */}
+      <Section tone="paper">
+        <div className="grid gap-10 md:grid-cols-12 md:gap-x-16 items-start">
           <div className="md:col-span-4">
             <Reveal>
-              <div className="label">N°01 · The model</div>
-              <h2 className="mt-8 text-stack">
-                <span className="block">A platform</span>
-                <span className="block">built for</span>
-                <span className="block text-cream/50">cooks.</span>
+              <div className="label text-ink/60">N°01 · Why Love at First Sight</div>
+              <h2 className="mt-8 font-display font-bold text-[clamp(2rem,4.5vw,4rem)] leading-[1.02] tracking-[-0.03em] text-ink">
+                <span className="block">Cook on</span>
+                <span className="block text-ink/50">your terms.</span>
               </h2>
             </Reveal>
           </div>
           <div className="md:col-span-8">
-            <Reveal delay={100}>
-              <p className="max-w-xl text-[16px] leading-[1.8] text-cream/80">
-                You're in complete control of your menus, pricing, and availability. You use your own branding, tell your own story, and set your own terms. We supply the booking engine, processing, escrow protection, and diners who value the work.
-              </p>
-            </Reveal>
+            <ul className="border-t border-ink/15">
+              {benefits.map((b, i) => (
+                <Reveal key={b.n} delay={i * 80}>
+                  <li className="border-b border-ink/15 py-10">
+                    <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-6 md:gap-10 items-baseline">
+                      <span className="num text-ink/50 shrink-0">{b.n}</span>
+                      <div className="min-w-0">
+                        <div className="font-display font-bold lowercase text-2xl md:text-3xl tracking-[-0.02em] text-ink">
+                          {b.t}
+                        </div>
+                        <p className="mt-3 max-w-md text-[15px] leading-relaxed text-ink/70">{b.b}</p>
+                      </div>
+                    </div>
+                  </li>
+                </Reveal>
+              ))}
+            </ul>
           </div>
         </div>
       </Section>
 
       {/* N°02 — How it works */}
-      <Section tone="burgundy-deep">
-        <div className="grid gap-12 md:grid-cols-12 md:gap-x-16 items-start">
+      <Section tone="burgundy">
+        <div className="grid gap-10 md:grid-cols-12 md:gap-x-16 items-start">
           <div className="md:col-span-4">
             <Reveal>
-              <div className="label">N°02 · The path</div>
+              <div className="label">N°02 · How it works</div>
               <h2 className="mt-8 text-stack">
                 <span className="block">Four steps</span>
                 <span className="block">to your first</span>
@@ -106,7 +164,9 @@ export default function ForChefs() {
                     <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-6 md:gap-10 items-baseline">
                       <span className="num text-cream/50 shrink-0">{s.n}</span>
                       <div className="min-w-0">
-                        <div className="font-display font-bold lowercase text-2xl md:text-3xl tracking-[-0.02em] text-cream">{s.t}</div>
+                        <div className="font-display font-bold lowercase text-2xl md:text-3xl tracking-[-0.02em] text-cream">
+                          {s.t}
+                        </div>
                         <p className="mt-3 max-w-md text-[15px] leading-relaxed text-cream/70">{s.b}</p>
                       </div>
                     </div>
@@ -129,14 +189,18 @@ export default function ForChefs() {
                 <span className="block text-ink/50">85%.</span>
               </h2>
               <p className="mt-8 max-w-md text-[15px] leading-relaxed text-ink/70">
-                For every booking, you receive 85% of the package price. The platform keeps 15% to cover payment processing, guest support, and marketing that brings diners to your profile.
+                For every booking, you receive 85% of the package price. The platform keeps 15% to cover payment
+                processing, guest support, and marketing that brings diners to your profile.
               </p>
             </Reveal>
           </div>
           <div className="md:col-span-7">
             <Reveal delay={120}>
               <div className="text-center md:text-right">
-                <div className="font-display font-bold text-ink leading-none tracking-[-0.05em]" style={{ fontSize: "clamp(9rem, 24vw, 22rem)" }}>
+                <div
+                  className="font-display font-bold text-ink leading-none tracking-[-0.05em]"
+                  style={{ fontSize: "clamp(9rem, 24vw, 22rem)" }}
+                >
                   85<span className="text-ink/40">%</span>
                 </div>
                 <div className="mt-4 label text-ink/50">to the chef · every booking</div>
@@ -194,22 +258,44 @@ export default function ForChefs() {
             <div className="mt-14 flex justify-center">
               <button
                 type="button"
-                onClick={() => { setSubmitted(false); setOpen(true); }}
+                onClick={() => {
+                  setSubmitted(false);
+                  setOpen(true);
+                }}
                 className="group/cta relative inline-flex h-[44px] cursor-pointer items-center gap-2.5 rounded-[16px] bg-burgundy text-cream border border-burgundy shadow-[0_14px_36px_-14px_rgba(0,0,0,0.55)] px-1.5 pr-4 text-[13px] font-medium tracking-tight transition-all duration-200 hover:bg-burgundy-deep hover:border-burgundy-deep active:scale-[0.97]"
               >
                 <span className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[12px] bg-cream text-burgundy">
-                  <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden className="transition-transform duration-200 group-hover/cta:translate-x-0.5">
-                    <path d="M1 5H13M13 5L9 1M13 5L9 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg
+                    width="14"
+                    height="10"
+                    viewBox="0 0 14 10"
+                    fill="none"
+                    aria-hidden
+                    className="transition-transform duration-200 group-hover/cta:translate-x-0.5"
+                  >
+                    <path
+                      d="M1 5H13M13 5L9 1M13 5L9 9"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </span>
                 <span>Apply Now</span>
               </button>
             </div>
-            <div className="mt-10 flex justify-center gap-4 flex-wrap">
-              <Link href="/chef-handbook" className="text-[12px] font-mono uppercase tracking-[0.14em] text-ink/60 hover:text-ink transition-colors">
+            <div className="mt-10 flex justify-center gap-4 flex-wrap animate-[fadein_300ms_ease-out]">
+              <Link
+                href="/chef-handbook"
+                className="text-[12px] font-mono uppercase tracking-[0.14em] text-ink/60 hover:text-ink transition-colors cursor-pointer"
+              >
                 Chef handbook →
               </Link>
-              <Link href="/payouts" className="text-[12px] font-mono uppercase tracking-[0.14em] text-ink/60 hover:text-ink transition-colors">
+              <Link
+                href="/payouts"
+                className="text-[12px] font-mono uppercase tracking-[0.14em] text-ink/60 hover:text-ink transition-colors cursor-pointer"
+              >
                 Payouts →
               </Link>
             </div>
@@ -222,7 +308,17 @@ export default function ForChefs() {
   );
 }
 
-function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: boolean; setOpen: (v: boolean) => void; submitted: boolean; setSubmitted: (v: boolean) => void }) {
+function ApplicationDialog({
+  open,
+  setOpen,
+  submitted,
+  setSubmitted,
+}: {
+  open: boolean;
+  setOpen: (v: boolean) => void;
+  submitted: boolean;
+  setSubmitted: (v: boolean) => void;
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [city, setCity] = useState("");
@@ -247,21 +343,49 @@ function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: b
               </DialogDescription>
             </DialogHeader>
             <form
-              onSubmit={(e) => { e.preventDefault(); if (canSubmit) setSubmitted(true); }}
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (canSubmit) setSubmitted(true);
+              }}
               className="mt-4 space-y-4"
             >
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <Label htmlFor="ap-name" className="label text-ink/60">Full name</Label>
-                  <Input id="ap-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" className="mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+                  <Label htmlFor="ap-name" className="label text-ink/60">
+                    Full name
+                  </Label>
+                  <Input
+                    id="ap-name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Jane Doe"
+                    className="mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40"
+                  />
                 </div>
                 <div className="col-span-2">
-                  <Label htmlFor="ap-email" className="label text-ink/60">Email</Label>
-                  <Input id="ap-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@kitchen.com" className="mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+                  <Label htmlFor="ap-email" className="label text-ink/60">
+                    Email
+                  </Label>
+                  <Input
+                    id="ap-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@kitchen.com"
+                    className="mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40"
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="ap-city" className="label text-ink/60">City</Label>
-                  <Input id="ap-city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="New York" className="mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+                  <Label htmlFor="ap-city" className="label text-ink/60">
+                    City
+                  </Label>
+                  <Input
+                    id="ap-city"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="New York"
+                    className="mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40"
+                  />
                 </div>
                 <div>
                   <Label className="label text-ink/60">Years cooking</Label>
@@ -271,25 +395,52 @@ function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: b
                     </SelectTrigger>
                     <SelectContent className="bg-cream text-ink border-ink/15">
                       {["1–3", "3–5", "5–10", "10+"].map((y) => (
-                        <SelectItem key={y} value={y} className="text-ink focus:bg-blush/50 focus:text-ink">{y}</SelectItem>
+                        <SelectItem key={y} value={y} className="text-ink focus:bg-blush/50 focus:text-ink">
+                          {y}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="col-span-2">
-                  <Label htmlFor="ap-cuisine" className="label text-ink/60">Cuisine / specialty</Label>
-                  <Input id="ap-cuisine" value={cuisine} onChange={(e) => setCuisine(e.target.value)} placeholder="e.g. Modern Italian, kaiseki, live-fire" className="mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+                  <Label htmlFor="ap-cuisine" className="label text-ink/60">
+                    Cuisine / specialty
+                  </Label>
+                  <Input
+                    id="ap-cuisine"
+                    value={cuisine}
+                    onChange={(e) => setCuisine(e.target.value)}
+                    placeholder="e.g. Modern Italian, kaiseki, live-fire"
+                    className="mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40"
+                  />
                 </div>
                 <div className="col-span-2">
-                  <Label htmlFor="ap-about" className="label text-ink/60">A short note about your cooking</Label>
-                  <Textarea id="ap-about" value={about} onChange={(e) => setAbout(e.target.value)} rows={4} placeholder="Where you trained, how you cook, what you'd bring to a private table…" className="mt-2 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+                  <Label htmlFor="ap-about" className="label text-ink/60">
+                    A short note about your cooking
+                  </Label>
+                  <Textarea
+                    id="ap-about"
+                    value={about}
+                    onChange={(e) => setAbout(e.target.value)}
+                    rows={4}
+                    placeholder="Where you trained, how you cook, what you'd bring to a private table…"
+                    className="mt-2 bg-white border-ink/20 text-ink placeholder:text-ink/40"
+                  />
                 </div>
               </div>
               <DialogFooter className="mt-6 gap-3">
-                <button type="button" onClick={() => setOpen(false)} className="inline-flex h-11 items-center rounded-[12px] border border-ink/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-ink/70 hover:border-ink/60 transition-colors cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex h-11 items-center rounded-[12px] border border-ink/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-ink/70 hover:border-ink/60 transition-colors cursor-pointer"
+                >
                   Cancel
                 </button>
-                <button type="submit" disabled={!canSubmit} className="inline-flex h-11 items-center rounded-[12px] bg-burgundy px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:bg-burgundy-deep transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="inline-flex h-11 items-center rounded-[12px] bg-burgundy px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:bg-burgundy-deep transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                >
                   Submit application
                 </button>
               </DialogFooter>
@@ -308,11 +459,18 @@ function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: b
                 Your application is with us. We read every one — expect a reply inside 48 hours, straight to your inbox.
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-8 flex justify-center gap-3 flex-wrap animate-[fadein_300ms_ease-out]">
-              <Link href="/chef-handbook" onClick={() => setOpen(false)} className="inline-flex h-11 items-center justify-center rounded-[12px] border border-ink/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-ink hover:border-ink/60 transition-colors cursor-pointer">
+            <div className="mt-8 flex justify-center gap-3 flex-wrap">
+              <Link
+                href="/chef-handbook"
+                onClick={() => setOpen(false)}
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-ink/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-ink hover:border-ink/60 transition-colors cursor-pointer"
+              >
                 Read the handbook
               </Link>
-              <button onClick={() => setOpen(false)} className="inline-flex h-11 items-center justify-center rounded-[12px] bg-burgundy px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:bg-burgundy-deep transition-colors cursor-pointer">
+              <button
+                onClick={() => setOpen(false)}
+                className="inline-flex h-11 items-center justify-center rounded-[12px] bg-burgundy px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:bg-burgundy-deep transition-colors cursor-pointer"
+              >
                 Close
               </button>
             </div>

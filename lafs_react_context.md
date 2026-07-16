@@ -162,14 +162,12 @@ Each page is designed as a standalone file route under `src/routes/` resolving t
 - Displays guest reviews section.
 
 ### Multi-Step Booking Wizard (`book.tsx`)
-- Stateful route implementing a five-stage booking funnel:
-  1. **Occasion selection**: Prompts selection from event themes (first date, anniversary, proposal, casual Tuesday, etc.).
-  2. **Chef browser**: Skips if chef parameter is present in search URL parameters.
-  3. **Package selection**: Configures desired menu course tier.
-  4. **Date & Time allocation**: Combines shadcn calendar and picker selectors.
-  5. **Credit card review**: Form capture for name, email, addresses, and dummy billing elements.
+- Stateful route implementing a three-stage booking funnel:
+  1. **Occasion & When**: Combined selector for event themes (first date, anniversary, proposal, etc.), date picker, and arrival time input.
+  2. **Chef & Menu selection**: Roster picker (if not preselected) and package/menu course tier configuration.
+  3. **Contact & Payment**: Form capture for name, email, billing details, payment method selection (Card, Pay Later), mock card preview, and summary breakdown.
 - Uses **TanStack search parameters** (`searchSchema` validated via Zod) to persist user configurations directly in the address bar. This allows refreshing and backward navigations without data loss:
-  `{ step: "occasion", occasion: "anniversary", chef: "elena-moretti", packageId: "p1", date: "2026-07-18", time: "19:30" }`
+  `{ step: "evening", occasion: "anniversary", chef: "elena-moretti", packageId: "p1", date: "2026-07-18", time: "19:30" }`
 
 ### Dashboard (`dashboard.tsx`)
 - Visual dashboard interface prototype.
@@ -178,7 +176,7 @@ Each page is designed as a standalone file route under `src/routes/` resolving t
 
 ### Editorial Pages (`our-story.tsx`, `for-chefs.tsx`, `chef-handbook.tsx`, `payouts.tsx`)
 - **`our-story.tsx`**: Visual milestones and values of the founders.
-- **`for-chefs.tsx`**: Features application dialog modal form asking for culinary styles, links, and pricing.
+- **`for-chefs.tsx`**: Features application dialog modal form asking for culinary styles, links, and pricing. Shows benefits (Set own prices, Build reputation, We handle rest), 4 steps how it works (Apply, Get approved, Publish gigs, Start cooking), 85% payout details, and testimonials from chefs (Elena M., Amara O., Leon P.).
 - **`chef-handbook.tsx` & `payouts.tsx`**: Clean breakdowns of platform policies, payment timelines (48h payouts), cancellation policies, and the standard **85% chef / 15% platform split**.
 
 ---
