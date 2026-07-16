@@ -63,7 +63,7 @@ export default function OurStory() {
             <div className="col-span-1 lg:col-span-6">
               <Reveal>
                 <div className="label">{b.n} · {b.label}</div>
-                <h2 className="mt-8 text-stack">
+                <h2 className="mt-8 font-display font-bold tracking-[-0.04em] leading-[0.9] text-[clamp(2rem,4.4vw,4.25rem)]">
                   {b.title.map((line, k) => (
                     <span key={k} className="block">{line}</span>
                   ))}

@@ -266,6 +266,52 @@
   .cursor-none-root, .cursor-none-root * {
     cursor: none !important;
   }
+  /* Restore native cursors inside form controls & dialogs so users can see where they're typing / clicking */
+  .cursor-none-root input,
+  .cursor-none-root textarea,
+  .cursor-none-root select,
+  .cursor-none-root [contenteditable="true"],
+  .cursor-none-root [role="dialog"] input,
+  .cursor-none-root [role="dialog"] textarea,
+  .cursor-none-root [role="dialog"] select,
+  .cursor-none-root [role="dialog"] [contenteditable="true"] {
+    cursor: text !important;
+  }
+  .cursor-none-root [role="dialog"] button,
+  .cursor-none-root [role="dialog"] a,
+  .cursor-none-root [role="dialog"] [role="button"] {
+    cursor: pointer !important;
+  }
+}
+
+/* Force native cursor on light surfaces (booking flow, modals, etc.) */
+.cursor-native,
+.cursor-native *,
+.cursor-none-root .cursor-native,
+.cursor-none-root .cursor-native * {
+  cursor: auto !important;
+}
+.cursor-native a,
+.cursor-native a *,
+.cursor-native button,
+.cursor-native button *,
+.cursor-native [role="button"],
+.cursor-native [role="button"] *,
+.cursor-none-root .cursor-native a,
+.cursor-none-root .cursor-native a *,
+.cursor-none-root .cursor-native button,
+.cursor-none-root .cursor-native button *,
+.cursor-none-root .cursor-native [role="button"],
+.cursor-none-root .cursor-native [role="button"] * {
+  cursor: pointer !important;
+}
+.cursor-native input,
+.cursor-native textarea,
+.cursor-native select,
+.cursor-none-root .cursor-native input,
+.cursor-none-root .cursor-native textarea,
+.cursor-none-root .cursor-native select {
+  cursor: text !important;
 }
 
 /* Hover: subtle image zoom + cream ring on interactive images */
