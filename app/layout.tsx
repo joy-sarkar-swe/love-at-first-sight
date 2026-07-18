@@ -18,23 +18,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Love at First Sight — Candlelit Private Chefs at Your Table",
   description: "Private chefs arriving quietly at your door for the meals that matter — anniversaries, first nights, Sunday evenings that deserve more.",
-  openGraph: {
-    title: "Love at First Sight — Candlelit Private Chefs at Your Table",
-    description: "Private chefs arriving quietly at your door for the meals that matter — anniversaries, first nights, Sunday evenings that deserve more.",
-    type: "website",
-    url: "https://intimate-table-bible.lovable.app/",
-    images: [
-      {
-        url: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/d71a0f1f-b645-4ce2-a60e-c8aef4e2fede",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Love at First Sight — Candlelit Private Chefs at Your Table",
-    description: "Private chefs arriving quietly at your door for the meals that matter — anniversaries, first nights, Sunday evenings that deserve more.",
-    images: ["https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/d71a0f1f-b645-4ce2-a60e-c8aef4e2fede"],
-  },
 };
 
 export default function RootLayout({

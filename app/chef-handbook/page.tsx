@@ -1,7 +1,5 @@
-"use client";
-
-import Link from "next/link";
 import { CinematicHero, Reveal, Section } from "@/components/ui-lafs";
+import Link from "next/link";
 
 const IMG = (id: string, w = 2000) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
@@ -54,36 +52,41 @@ export default function Handbook() {
     <>
       <CinematicHero
         image={IMG("photo-1466637574441-749b8f19452f", 2200)}
-        badge="For our chefs"
+        badge='For our chefs'
         headline={"The chef\nhandbook."}
-        caption="How the platform works from your side of the stove. Eight short chapters. Nothing hidden."
-        height="compact"
+        caption='How the platform works from your side of the stove. Eight short chapters. Nothing hidden.'
+        height='compact'
       />
 
-      <Section tone="burgundy">
-        <div className="grid gap-12 md:grid-cols-12 md:gap-x-16 items-start">
-          <div className="md:col-span-4">
+      <Section tone='burgundy'>
+        <div className='grid gap-12 md:grid-cols-12 md:gap-x-16 items-start'>
+          <div className='md:col-span-4'>
             <Reveal>
-              <div className="label">N°01 · The house rules</div>
-              <h2 className="mt-8 text-stack">
-                <span className="block">Plainly</span>
-                <span className="block text-cream/50">written.</span>
+              <div className='label'>N°01 · The house rules</div>
+              <h2 className='mt-8 text-stack'>
+                <span className='block'>Plainly</span>
+                <span className='block text-cream/50'>written.</span>
               </h2>
-              <p className="mt-8 text-cream/70 text-[15px] leading-relaxed max-w-sm">
-                We keep the platform small on purpose. Fewer chefs, better matches, quieter kitchens.
+              <p className='mt-8 text-cream/70 text-[15px] leading-relaxed max-w-sm'>
+                We keep the platform small on purpose. Fewer chefs, better
+                matches, quieter kitchens.
               </p>
             </Reveal>
           </div>
-          <div className="md:col-span-8">
-            <ul className="border-t border-cream/15">
+          <div className='md:col-span-8'>
+            <ul className='border-t border-cream/15'>
               {chapters.map((c, i) => (
                 <Reveal key={c.n} delay={i * 60}>
-                  <li className="border-b border-cream/15 py-10">
-                    <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-6 md:gap-10 items-baseline">
-                      <span className="num text-cream/50 shrink-0">{c.n}</span>
-                      <div className="min-w-0">
-                        <div className="font-display font-bold lowercase text-2xl md:text-3xl tracking-[-0.02em] text-cream">{c.t}</div>
-                        <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-cream/75">{c.b}</p>
+                  <li className='border-b border-cream/15 py-10'>
+                    <div className='grid grid-cols-[auto_minmax(0,1fr)] gap-6 md:gap-10 items-baseline'>
+                      <span className='num text-cream/50 shrink-0'>{c.n}</span>
+                      <div className='min-w-0'>
+                        <div className='font-display font-bold lowercase text-2xl md:text-3xl tracking-[-0.02em] text-cream'>
+                          {c.t}
+                        </div>
+                        <p className='mt-3 max-w-xl text-[15px] leading-relaxed text-cream/75'>
+                          {c.b}
+                        </p>
                       </div>
                     </div>
                   </li>
@@ -91,11 +94,15 @@ export default function Handbook() {
               ))}
             </ul>
 
-            <div className="mt-16 flex flex-wrap gap-4">
-              <Link href="/for-chefs" className="inline-flex h-12 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy hover:bg-[#F0E8DE] transition-colors">
+            <div className='mt-16 flex flex-wrap gap-4'>
+              <Link
+                href='/for-chefs'
+                className='inline-flex h-12 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy hover:bg-[#F0E8DE] transition-colors'>
                 Apply to cook
               </Link>
-              <Link href="/payouts" className="inline-flex h-12 items-center rounded-[12px] border border-cream/40 px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:border-cream transition-colors">
+              <Link
+                href='/payouts'
+                className='inline-flex h-12 items-center rounded-[12px] border border-cream/40 px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:border-cream transition-colors'>
                 See payouts
               </Link>
             </div>
