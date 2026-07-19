@@ -67,8 +67,8 @@ export default function Home() {
         image={HERO_IMG}
         video={HERO_VIDEO}
         badge="Private Chefs for Unforgettable Moments"
-        headline={"Book the chef.\nKeep the night."}
-        caption="Browse vetted private chefs in your city. Book for a date night, an anniversary, a family dinner, or just a Tuesday that deserves more. They come to your kitchen with everything."
+        headline="Private Chef Experiences Worth Falling In Love With"
+        caption="Celebrate life’s most meaningful moments with exceptional chefs, personalized menus, and unforgettable hospitality—all in the comfort of your home."
       >
         <CircleButton to="/chefs" icon="grid">Browse chefs</CircleButton>
         <CircleButton to="/how-it-works" variant="secondary" icon="play">How it works</CircleButton>
