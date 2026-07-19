@@ -1,5 +1,8 @@
 import { CinematicHero, Reveal, Section } from "@/components/ui-lafs";
 import Link from "next/link";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Love at First Sight — The Chef Handbook', description: 'How the platform works from your side of the stove.' };
 
 const IMG = (id: string, w = 2000) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;

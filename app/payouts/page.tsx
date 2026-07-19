@@ -1,5 +1,8 @@
 import { CinematicHero, Reveal, Section } from "@/components/ui-lafs";
 import Link from "next/link";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Love at First Sight — Payouts', description: '85% of every booking. Paid within 48 hours.' };
 
 const IMG = (id: string, w = 2000) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;

@@ -1,4 +1,7 @@
 import { CinematicHero, Reveal, Section } from "@/components/ui-lafs";
+import { Metadata } from "next";
+
+export const metadata: Metadata = { title: 'Love at First Sight — Returns', description: 'Sometimes the evening changes. Here is how we hold it.' };
 
 const IMG = (id: string, w = 1800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;

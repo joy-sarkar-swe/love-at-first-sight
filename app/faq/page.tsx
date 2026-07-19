@@ -4,6 +4,9 @@ import {
   Reveal,
   Section,
 } from "@/components/ui-lafs";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Love at First Sight — FAQ', description: 'Frequently Asked Questions about Love at First Sight.' };
 
 const IMG = (id: string, w = 1800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;

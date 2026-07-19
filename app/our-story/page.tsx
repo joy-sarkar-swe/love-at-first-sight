@@ -5,6 +5,9 @@ import {
   RevealImage,
   Section,
 } from "@/components/ui-lafs";
+import {Metadata} from 'next';
+
+export const metadata: Metadata = { title: 'Love at First Sight — Our Story', description: 'A love story that became a table.' };
 
 const IMG = (id: string, w = 1600) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
