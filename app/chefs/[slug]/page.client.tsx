@@ -15,6 +15,7 @@ import {
 } from "@/components/ui-lafs";
 import type { LightboxItem } from "@/components/ui-lafs";
 import { getChef } from "@/data/chefs";
+import { WHATS_INCLUDED } from "@/data/site-content";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -58,6 +59,7 @@ export default function ChefDetail({ params }: Props) {
                 <MetaRow k="Specialty" v={chef.specialty} />
                 <MetaRow k="Rating" v={`${chef.rating.toFixed(1)} / 5`} />
                 <MetaRow k="Starting from" v={`$${chef.startingPrice}`} />
+                <MetaRow k="Usually books" v={leadTimeLabel(chef.leadTimeWeeks)} />
               </dl>
             </Reveal>
           </div>
@@ -73,7 +75,7 @@ export default function ChefDetail({ params }: Props) {
             </Reveal>
             <Reveal delay={200}>
               <div className="mt-12">
-                <ButtonLink to="/book" search={{ step: "occasion", chef: chef.slug }} size="lg">
+                <ButtonLink to="/book" search={{ step: "evening", chef: chef.slug }} size="lg">
                   book {firstName.toLowerCase()}
                 </ButtonLink>
               </div>
@@ -97,7 +99,7 @@ export default function ChefDetail({ params }: Props) {
             <ul className="border-t border-cream/15">
               {chef.packages.map((p, i) => (
                 <li key={p.id} className="border-b border-cream/15">
-                  <Link href={`/book?step=occasion&chef=${chef.slug}&packageId=${p.id}`}
+                  <Link href={`/book?step=evening&chef=${chef.slug}&packageId=${p.id}`}
                     className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-baseline gap-4 md:gap-8 py-8 md:py-10 transition-colors">
                     <span className="num shrink-0 pt-1">{String(i + 1).padStart(2, "0")}</span>
                     <div className="min-w-0">
@@ -118,13 +120,98 @@ export default function ChefDetail({ params }: Props) {
                 </li>
               ))}
             </ul>
+            {chef.offersCustomMenu && (
+              <p className="mt-6 text-[13px] text-cream/60 leading-relaxed">
+                Custom menus available — design yours when you book.
+              </p>
+            )}
+          </div>
+        </div>
+      </Section>
+
+      {chef.signatureDishes && chef.signatureDishes.length > 0 && (
+        <Section tone="burgundy">
+          <div className="grid gap-12 md:grid-cols-12 md:gap-x-16 items-start">
+            <div className="md:col-span-4">
+              <Reveal>
+                <div className="label">n°03 · signature dishes</div>
+                <h2 className="mt-8 text-stack">
+                  <span className="block">what</span>
+                  <span className="block text-cream/50">{firstName.toLowerCase()} is known for.</span>
+                </h2>
+              </Reveal>
+            </div>
+            <div className="md:col-span-8">
+              <ul className="border-t border-cream/15">
+                {chef.signatureDishes.map((d, i) => (
+                  <li key={d.name} className="border-b border-cream/15 py-6 md:py-7">
+                    <Reveal delay={i * 60}>
+                      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-6">
+                        <span className="num shrink-0 text-cream/60">{String(i + 1).padStart(2, "0")}</span>
+                        <div className="min-w-0">
+                          <div className="font-display font-bold lowercase text-xl md:text-[22px] tracking-[-0.02em] text-cream">{d.name}</div>
+                          {d.note && <p className="mt-2 text-[14px] text-cream/70 leading-relaxed">{d.note}</p>}
+                        </div>
+                      </div>
+                    </Reveal>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream/45">
+                Showcase only — bookings are by menu, not by dish.
+              </p>
+            </div>
+          </div>
+        </Section>
+      )}
+
+      <Section tone="burgundy-deep">
+        <div className="grid gap-12 md:grid-cols-12 md:gap-x-16 items-start">
+          <div className="md:col-span-4">
+            <Reveal>
+              <div className="label">n°04 · what to expect</div>
+              <h2 className="mt-8 text-stack">
+                <span className="block">the kitchen,</span>
+                <span className="block text-cream/50">the setup.</span>
+              </h2>
+            </Reveal>
+          </div>
+          <div className="md:col-span-8 space-y-10">
+            {chef.equipmentRequirements && chef.equipmentRequirements.length > 0 && (
+              <Reveal>
+                <div className="label">equipment requirements</div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {chef.equipmentRequirements.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center rounded-[8px] border border-gold/40 bg-gold/[0.08] px-3 py-1.5 text-[10.5px] font-mono uppercase tracking-[0.14em] text-gold"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </Reveal>
+            )}
+            <div className="grid gap-6 md:grid-cols-3">
+              {WHATS_INCLUDED.map((block, i) => (
+                <Reveal key={block.title} delay={i * 80}>
+                  <div className="border-t border-cream/15 pt-6">
+                    <div className="label text-cream/60">{`n°${String(i + 1).padStart(2, "0")}`}</div>
+                    <h3 className="mt-3 font-display font-bold lowercase text-[20px] tracking-[-0.02em] text-cream">
+                      {block.title}
+                    </h3>
+                    <p className="mt-3 text-[14px] leading-[1.75] text-cream/75">{block.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </div>
       </Section>
 
       {chef.gallery.length > 0 && (
         <Section tone="burgundy">
-          <Reveal><div className="label">n°03 · the room</div></Reveal>
+          <Reveal><div className="label">n°05 · the room</div></Reveal>
           <div className="mt-10 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             {chef.gallery.map((src, i) => {
               const group: LightboxItem[] = chef.gallery.map((g, gi) => ({
@@ -152,7 +239,7 @@ export default function ChefDetail({ params }: Props) {
         <div className="grid gap-12 md:grid-cols-12 md:gap-x-16">
           <div className="md:col-span-4">
             <Reveal>
-              <div className="label">n°04 · overheard</div>
+              <div className="label">n°06 · overheard</div>
               <h2 className="mt-8 text-stack">
                 <span className="block">what guests</span>
                 <span className="block text-cream/50">said.</span>
@@ -183,7 +270,7 @@ export default function ChefDetail({ params }: Props) {
               <span className="block text-cream/50">{firstName.toLowerCase()}?</span>
             </h2>
             <div className="mt-14 flex justify-center">
-              <CircleButton to="/book" search={{ step: "occasion", chef: chef.slug }} size={188}>
+              <CircleButton to="/book" search={{ step: "evening", chef: chef.slug }} size={188}>
                 book this chef
               </CircleButton>
             </div>
@@ -206,4 +293,9 @@ function MetaRow({ k, v }: { k: string; v: string }) {
       <dd className="min-w-0 text-right text-[14px] text-cream truncate">{v}</dd>
     </div>
   );
+}
+
+function leadTimeLabel(weeks: number) {
+  if (weeks <= 1) return "~1 week out";
+  return `~${weeks} weeks out`;
 }

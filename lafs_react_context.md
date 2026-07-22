@@ -1,297 +1,155 @@
-# Love at First Sight — React Codebase Analysis & Context
+# Love at First Sight — React & Next.js Codebase Analysis & Migration Context
 
-This document provides a complete, structured analysis and contextual breakdown of the frontend codebase located in the `love-at-first-site-zentura` folder. It serves as a detailed blueprint for converting the application's UI, routes, logic, and animations into the Next.js App Router codebase under `lafs-next`.
+This document provides a complete, structured analysis and contextual breakdown of the frontend codebase located in `love-at-first-site-zentura` (React version) and its synchronized implementation in `lafs-next` (Next.js App Router version).
 
 ---
 
 ## 1. Technical Stack Overview
 
-The source project (`love-at-first-site-zentura`) is built using a modern, fast, server-side rendered (SSR) setup:
-
+### React Version (`love-at-first-site-zentura`)
 - **Core Framework**: **React 19** (`^19.2.0`) & **React DOM 19**.
-- **Build Tool / Bundler**: **Vite 8** (`^8.0.16`) with TanStack's Vite plugins (`@lovable.dev/vite-tanstack-config` and `@tanstack/router-plugin`).
-- **Routing**: **TanStack Start** / **TanStack Router** (`^1.170.16`), a file-based, type-safe router with Zod-based search parameter validation.
-- **Styling**: **Tailwind CSS v4** (`^4.2.1`) using Vite CSS integration.
-- **Animations**: **Framer Motion** (`^12.42.2`) for high-fidelity interactive elements, cinematic reveals, and page transition effects.
-- **State & Data Fetching**: **TanStack React Query** (`^5.101.1`) for async caching (mostly used dynamically for page context).
-- **Forms & Validation**: **React Hook Form** (`^7.71.2`) with **Zod** (`^4.4.3`) for schema validation.
-- **Model Context Protocol (MCP)**: Registered server-side handlers powered by `@lovable.dev/mcp-js` to expose read-only tools representing the private-chef marketplace.
+- **Build Tool / Bundler**: **Vite 8** (`^8.0.16`) with TanStack Vite plugins.
+- **Routing**: **TanStack Start** / **TanStack Router** (`^1.170.16`), type-safe file-based router.
+- **Styling**: **Tailwind CSS v4** (`^4.2.1`).
+- **Animations**: **Framer Motion** (`^12.42.2`) for interactive elements and transitions.
+
+### Next.js Version (`lafs-next`)
+- **Core Framework**: **Next.js 15+** App Router.
+- **Routing**: App Router directory structure (`app/[routes]`), using `page.tsx` (Server Components) and `page.client.tsx` (Client Components).
+- **Styling**: **Tailwind CSS v4** with CSS variables (`globals.css`).
+- **UI Components**: Shadcn UI + custom `ui-lafs` component system.
 
 ---
 
-## 2. Directory Structure
+## 2. Recent Repository Synchronization & Updates
+
+### A. Centralized Site Content (`data/site-content.ts`)
+A dedicated content module was introduced to centralize all site copy, constants, and structured data across both projects:
+- **`EQUIPMENT_REQUIREMENTS`**: Comprehensive equipment tags required by private chefs (Standard Stove/Oven, High-powered Blender, Cast-Iron Skillet, Food Processor, Pasta Roller, Stand Mixer, Blowtorch, Sous-vide Precision Cooker, Sheet Pans & Roasters, Outdoor Grill/BBQ).
+- **`WHATS_INCLUDED`**: 3 core guest inclusions (Groceries & Sourcing, Cooking & Plating, Full Kitchen Cleanup).
+- **`HOW_IT_WORKS_STEPS`**: 4-step guest flow (Choose the Evening, Pick Your Chef, We Handle the Rest, An Unhurried Evening).
+- **`HOME_HERO`**: Hero copy constants for the landing page.
+- **`CONTACT_DETAILS`**: Official contact email roster, reply times, web address, and Instagram handle.
+- **`CONFIRMATION_GATING_STATEMENT`**: Legal and workflow statement clarifying chef review and confirmation gating prior to charge.
+- **`ABOUT_CONTENT`**: Story, mission, vision, and founder bio data.
+- **`FOR_CHEFS_CONTENT`**: "Why Partner With Us", "Founding Signature Benefits", "Our Standards", "Chef Pledge", and FAQ items for chefs.
+- **`CHEF_FAQ`**: FAQ items and closing pledge statement.
+
+### B. Chef Data Model Expansion (`data/chefs.ts`)
+The `Chef` type interface was expanded to support rich portfolio metadata:
+- **`equipmentRequirements`**: `EquipmentRequirement[]` array detailing required kitchen tools.
+- **`signatureDishes`**: Array of `{ name: string; note?: string }` showcasing top dishes.
+- **`offersCustomMenu`**: Boolean indicating whether the chef accepts custom menu briefs.
+- **`leadTimeWeeks`**: Number indicating typical advance booking lead time.
+- **Expanded Roster**: 13 total chefs (`elena-moretti`, `amara-okonkwo`, `leon-park`, `sophia-laurent`, `marcus-vance`, `claire-dubois`, `diego-torres`, `kenji-takahashi`, `isabella-rossi`, `hassan-al-mansoor`, `maya-lin`, `gabriel-silva`, `chloe-bennett`).
+
+### C. Chef Detail View (`app/chefs/[slug]/page.client.tsx`)
+Updated to display:
+- **Signature Dishes**: Dedicated showcase section with dish notes.
+- **Equipment Requirements**: Visual tags for required kitchen equipment.
+- **Lead Time & Custom Menu Badges**: Visual indicators for booking notice and custom menus.
+- **What To Expect**: 3-step breakdown consuming `WHATS_INCLUDED`.
+
+### D. For Chefs Application Flow (`app/for-chefs/page.client.tsx`)
+Rebuilt to feature a complete 3-step application modal (`ApplicationDialog`):
+1. **Step 1 — About You**: Name, email, phone, city, travel radius, portfolio URL.
+2. **Step 2 — Your Cooking**: Cuisine, experience years, headline, bio, signature dishes, custom menu toggle, sample package creator.
+3. **Step 3 — Credentials & Kitchen**: Profile photo upload, food safety cert, liability insurance toggle, equipment requirements checklist, availability days, lead time, and signed chef pledge.
+
+### E. 4-Step Booking Wizard (`app/book/page.client.tsx`)
+Redesigned booking flow supporting 4 distinct steps:
+1. **Step 1 — The Evening**: Guest name input (for live menu invitation preview), occasion selector, calendar date picker, arrival time.
+2. **Step 2 — Chef & Menu**: Chef selector, package selector, "Design a Custom Menu" brief builder (`__custom__`), guest count, and dietary/allergy notes.
+3. **Step 3 — Kitchen & Equipment**: Chef equipment checklist, 6-item kitchen questionnaire (stove, fridge, pots, baking, boards, tableware), kitchen limitations input, and photo uploads.
+4. **Step 4 — Contact & Payment**: Guest details, payment method selection (Card / Pay after chef confirms), deposit calculation, `CONFIRMATION_GATING_STATEMENT`, live physical invitation preview (`MenuPreview`), and success confirmation modal (`SuccessDialog`).
+
+### F. Page Consistency & Branding
+- **Footer**: Updated to consume `CONTACT_DETAILS` for Instagram and site link.
+- **Our Story**: Updated to consume `ABOUT_CONTENT`.
+- **Contact Page**: Updated to consume `CONTACT_DETAILS`.
+- **FAQ Page**: Updated to consume `CHEF_FAQ`.
+- **Home Page**: Updated to consume `HOME_HERO`.
+
+---
+
+## 3. Directory Structure Comparison
 
 ```text
-love-at-first-site-zentura/
-├── public/                 # Static assets (favicons, images, logos)
-├── src/
-│   ├── assets/             # Project-specific static visual assets (e.g. logos)
-│   ├── components/
-│   │   ├── layout/         # Shared global structure (Navbar, Footer)
-│   │   ├── ui/             # Radix UI + shadcn/ui primitive controls
-│   │   └── ui-lafs/        # Custom-made, highly-styled creative UI widgets
-│   ├── data/               # Local mock databases (chefs, journal/blog posts)
-│   ├── hooks/              # Reusable React hooks (use-mobile, etc.)
-│   ├── lib/
-│   │   ├── mcp/            # MCP server configuration and custom tools
-│   │   ├── error-capture.ts
-│   │   ├── error-page.ts
-│   │   ├── lovable-error-reporting.ts
-│   │   └── utils.ts        # CN utility for conditional class merging
-│   ├── routes/             # TanStack Start file-based routing components
-│   │   ├── [.mcp]/
-│   │   ├── [.well-known]/
-│   │   ├── __root.tsx      # Global routing wrapper, context provider, shell
-│   │   ├── index.tsx       # Landing page route
-│   │   ├── book.tsx        # Multi-step checkout wizard
-│   │   ├── chefs.tsx       # Chef list layout shell
-│   │   ├── chefs.index.tsx # Roster search, filter, and pagination page
-│   │   ├── chefs.$slug.tsx # Chef details, packages, reviews
-│   │   ├── journal.tsx     # Blog/journal layout shell
-│   │   ├── journal.index.tsx # Blog post listing by category
-│   │   ├── journal.$slug.tsx # Blog post reader page
-│   │   ├── for-chefs.tsx   # Chef onboarding landing page
-│   │   ├── chef-handbook.tsx # Guidelines for platform chefs
-│   │   ├── payouts.tsx     # Platform fee structure (85/15) & payout timeline
-│   │   └── ...             # Contact, FAQ, Our Story, Returns, Privacy
-│   ├── router.tsx          # TanStack Router initialization
-│   ├── server.ts           # Nitro server SSR entry and HTTP error normalizer
-│   ├── start.ts            # Client-side mounting entry with middleware
-│   └── styles.css          # Tailwind CSS v4 variables, global styles, utilities
+lafs-next/
+├── app/
+├── book/
+│   ├── page.tsx            # Server Component wrapper
+│   └── page.client.tsx     # 4-Step Client Booking Flow & Live Preview
+├── chefs/
+│   ├── page.tsx
+│   ├── page.client.tsx     # Roster filter & search
+│   └── [slug]/
+│       ├── page.tsx
+│       └── page.client.tsx # Chef details, signature dishes, equipment tags
+├── for-chefs/
+│   ├── page.tsx
+│   └── page.client.tsx     # Chef landing page & 3-Step Application Modal
+├── our-story/
+│   └── page.tsx            # Founder story & mission
+├── contact/
+│   ├── page.tsx
+│   └── page.client.tsx     # Contact details & inquiry form
+├── faq/
+│   └── page.tsx            # Guest & Chef FAQ accordion
+├── data/
+│   ├── chefs.ts            # 13 chef profiles + expanded Chef schema
+│   └── site-content.ts     # Centralized site copy constants
+├── components/
+│   ├── layout/             # Navbar, Footer
+│   ├── ui-lafs/            # CinematicHero, Section, Reveal, CircleButton
+│   └── ui/                 # Calendar, Dialog, Popover, Input, Textarea
 ```
 
 ---
 
-## 3. Styling & Theming System (`src/styles.css`)
+## 4. Styling & Theme System (`app/globals.css`)
 
-The application defines a **premium, editorial cinematic aesthetic** ("Aldren × Club 54 fusion") characterized by dark crimson tones, minimal borders, fine lines, custom cursors, and elegant typography.
-
-### Design Tokens (Tailwind v4 Variables)
-
-- **Burgundy Canvas Background**: `#67242B` (`--burgundy`)
+- **Canvas Background**: `#67242B` (`--burgundy`)
 - **Deep Dark Burgundy**: `#4A181D` (`--burgundy-deep`)
-- **Accent Red-Burgundy**: `#7A3239` (`--burgundy-tint`)
-- **Warm Cream Text**: `#F4EFE7` (`--cream`)
-- **Muted Cream Text**: `rgba(244, 239, 231, 0.62)` (`--muted-cream`)
-- **Warm Sand/Paper Surface**: `#EFE8DC` (`--paper`)
-- **Dark Ink Text (on paper)**: `#1A1614` (`--ink`)
+- **Cream Text**: `#F4EFE7` (`--cream`)
+- **Paper Surface**: `#EFE8DC` (`--paper`)
+- **Dark Ink**: `#1A1614` (`--ink`)
 - **Gold Accent**: `#C9A961` (`--gold`)
-- **Destructive/Warning Red**: `#C43030` (`--destructive`)
-
-### Typography Mappings
-
-- **Display & Body Font**: `Inter` (sans-serif)
-  - Configured with tight letter-spacing (`tracking-[-0.035em]` for display, `tracking-[-0.045em]` for heroes) and bold, heavy headings.
-  - Headings are styled lowercase for editorial aesthetic: `lowercase`.
-- **Numerals & Labels Font**: `Geist Mono`
-  - Used for numbers, chapter guides, dates, and navigation labels (`uppercase tracking-[0.14em]`).
-
-### Custom CSS Classes / Utilities
-
-- **`.hairline`**: A very subtle border (`rgba(244, 239, 231, 0.15)`).
-- **`.text-hero`**: Fluid responsive sizing for landing headlines (`clamp(2.75rem, 9vw, 8.5rem)`).
-- **`.text-stack`**: Fluid sizing for secondary display headings (`clamp(2.5rem, 7.5vw, 6.5rem)`).
-- **`.container-page`**: Responsive width container capped at `1360px` with responsive inline paddings.
-- **`.cursor-none-root`**: Applied globally when custom cursor is active to hide default pointer actions.
-- **`.reveal` / `.reveal-clip`**: Transition setups for animations.
+- **Cursor Classes**: `.cursor-none-root` (candlelit cursor) & `.cursor-native` (default system cursor over paper cards & modals).
 
 ---
 
-## 4. Reusable Layout & Creative Components
+## 5. Latest Commit Synchronization (Commits `7b7ec4f` to `d5ee5a7`)
 
-All custom styling features are consolidated in `src/components/ui-lafs/` and `src/components/layout/`.
+1. **Navbar Breakpoint Update (`components/layout/Navbar.tsx`)**:
+   - Changed desktop continuous nav pill display threshold from `hidden md:flex` to `hidden lg:flex`.
+   - Updated mobile logo link and hamburger menu button threshold to `lg:hidden`.
 
-### Layout Components
+2. **Root Layout Pointer Setup (`app/layout.tsx`)**:
+   - Removed `<CustomCursor />` component from root layout to ensure native cursor and hover behaviors across all cards and interactive controls.
 
-1. **`Navbar.tsx`**
-   - Global fixed glassmorphic container (`bg-brand/90 backdrop-blur-md` on scroll).
-   - Contains navigation items (`Home`, `About`, `Chefs`, `For Chefs`, `Gallery`, `Journal`, `Contact`).
-   - Sign In CTA button routing to `/dashboard`.
-   - Fullscreen mobile overlay menu using Framer Motion stagger transitions.
-2. **`Footer.tsx`**
-   - Clean four-column editorial grid (`Explore`, `For Chefs`, `Company`, `Legal`).
-   - Signature large lowercase wordmark branding: **"love, plated."**
-   - Dynamically pulls current year: `new Date().getFullYear()`.
+3. **Booking Wizard Design & Flow Alignment (`app/book/page.client.tsx`)**:
+   - **`StepTitle` & Container Grid**: Updated step title styling to use a 2-column grid (`lg:grid-cols-[80px_minmax(0,1fr)]`), converting "Step X of Y" to `"N°0X / 0Y"` with a gold underline flourish and 54px bold lowercase display title. Added `lg:pl-[120px]` inner padding to form containers across all 4 steps.
+   - **Step 1 (`EveningStep`)**: Replaced button grid with a luxury `<Select>` dropdown for occasions (`What are we celebrating?`), dark transparent inputs (`bg-cream/[0.04] border-cream/20`), italic hint copy (*`Watch the invitation fill in as you type.`*, *`Dinner usually starts 18:00–20:30.`*), and custom occasion input toggle.
+   - **Step 3 (`KitchenStep`)**: Fully aligned with React design using `EditorialSection` components:
+     - Section `i`: `what [chef] needs` (Chef's equipment requirements pills).
+     - Section `ii`: `the kitchen, honestly` (Divided questionnaire with uppercase font-mono `YES`/`NO` gold buttons and limitations text area).
+     - Section `iii`: `anything to bring?` (`EXTRA_EQUIPMENT_OPTIONS` grid with dinnerware, induction, grill, linens, stemware, etc.).
+     - Section `iv`: `a look at the room` (Image upload dropzone).
+     - Section `v`: `what's included` (`WHATS_INCLUDED` 3-column list with `01`, `02`, `03` numbers).
+   - **Paper Invitation Card (`MenuPreview`)**: Removed all border-radius rounded corners to restore the crisp, sharp physical paper card rectangle (`relative w-full text-ink` with inset line borders). Updated all paper typography to match React design (`font-serif italic text-[34px]` for guest name, `font-serif italic text-[15px]` for occasion, `font-serif italic text-[22px]` for menu title, `font-serif text-[13.5px]` for description, `font-serif italic text-[15px]` for chef name).
+   - **Payment Step (`PaymentStep`)**: Single-column layout (`max-w-xl`), removed redundant right-side summary box, added mobile-only due today summary row (`md:hidden`), and updated gating statement styling (`border-l-2 border-gold/40 pl-4`).
+   - **Success Screen / Confirmation**: Updated title responsiveness (`text-[44px] sm:text-[56px] md:text-[72px] lg:text-[88px]`), expanded container width (`max-w-5xl`), and transformed layout into a 2-column grid (`grid gap-12 lg:grid-cols-[minmax(0,1fr)_380px]`) containing guest metadata on the left and the physical `MenuPreview` card (`stepIdx={4}`) on the right.
 
-### Custom UI Components (`src/components/ui-lafs/`)
+4. **Chef Application Modal Simplification (`app/for-chefs/page.client.tsx`)**:
+   - **Step 2 (Your Cooking)**: Replaced multi-field dish creator and sample package form box with a simple signature dishes textarea (one per line, up to 5) and converted custom menu option to a Select dropdown (`Yes, on request` / `No, set menus only`).
+   - **Step 3 (Credentials & Kitchen)**: Streamlined Step 3 into a clean 2-column form (profile photo, food safety cert dropdown, liability insurance dropdown, typical lead time dropdown, available days buttons, custom gold checkboxes, and informational notice).
 
-1. **`CinematicHero.tsx`**
-   - Parallax-scrolled header section supporting an Unsplash static background image or auto-played background loop video.
-   - Cinematic entry transition using a `clip-path` curtain sweep (`inset(0 0 100% 0) -> inset(0 0 0 0)` over `1200ms`).
-   - Staggered line-by-line slide-up and blur reveal for display titles.
-2. **`CustomCursor.tsx`**
-   - Tracks mouse coordinates with responsive spring physics.
-   - Screen-blended soft cream outer glow wrapper (`mix-blend-screen` with radial gradient) and a sharp inner cream dot.
-   - Automatically detects pointer capability and expands when hovering over interactive nodes (`a`, `button`, inputs, etc.).
-3. **`Lightbox.tsx`**
-   - Shared React Context Provider (`LightboxProvider`) and trigger component (`LightboxImage`).
-   - Mounts a swipeable, full-screen image overlay with keyboard handlers (`Escape` to close, `ArrowLeft` / `ArrowRight` to navigate), index counter, captions, and tap-outside closures.
-4. **`ChefCard.tsx`**
-   - Grid cell displaying chef name, profile portrait, cuisine, city, and starting price.
-   - Includes micro-interaction underlines that sweep open (`scale-x-0 -> scale-x-100`) on mouse hovers.
-5. **`Reveal.tsx` / `BlurReveal.tsx` / `RevealImage.tsx`**
-   - Wrappers using Framer Motion to animate entry fades, slide-ups, or curtain clips on scroll view intersections.
-6. **`Stars.tsx`**
-   - Tiny visual star rating indicator (1-5 ratings) filled proportionally using SVG polygons.
+5. **Our Story Page Refinements (`app/our-story/page.tsx`)**:
+   - **Founders Photo**: Updated to use `/Love_at_First_Sight_Founders_Photo.png` from the `public` directory with height expanded to `h-[600px] sm:h-[720px] md:h-[820px]`.
+   - **Top Alignment**: Set section grid alignment to `items-start` so the left column text is aligned cleanly at the top.
 
----
 
-## 5. Page Routes & Functionality
 
-Each page is designed as a standalone file route under `src/routes/` resolving through TanStack start.
 
-### Homepage (`index.tsx`)
-- Includes the `CinematicHero` with an Unsplash background image and background MP4 video.
-- **Section 1**: Conceptual introduction to the marketplace.
-- **Section 2**: Five-fragment editorial image collage wired to the `LightboxImage` controller.
-- **Section 3**: Three-step procedural layout explaining the platform workflow.
-- **Section 4**: Slider of editorial reviews (featuring customer quotes, names, categories, and avatars).
 
-### Chefs Directory (`chefs.index.tsx` & `chefs.tsx`)
-- Visual roster filtering panel:
-  - **Fuzzy Search Input**: Filters by name, cuisine, city, or specialties.
-  - **Select Filters**: Multi-option custom Radix triggers matching predefined array sets (`cuisines`, `cities`).
-  - **Sorting Selector**: Sorts by featured roster order, highest rating score, or price bounds.
-  - **Pagination Controls**: Page list blocks of 12 elements with dynamic forward/backward tabs.
-
-### Chef Profile Detail View (`chefs.$slug.tsx`)
-- Dynamic route utilizing the `slug` parameter (fetched from `getChef` in data loader).
-- Highlighting personal info blocks (headline bio description, ratings, cuisine credentials).
-- Displays individual chef **dinner packages** with inclusions (e.g. course counts, wine setup, table setups).
-- Interactive grids linking package links to preselected bookings.
-- Displays guest reviews section.
-
-### Multi-Step Booking Wizard (`book.tsx`)
-- Stateful route implementing a three-stage booking funnel:
-  1. **Occasion & When**: Combined selector for event themes (first date, anniversary, proposal, etc.), date picker, and arrival time input.
-  2. **Chef & Menu selection**: Roster picker (if not preselected) and package/menu course tier configuration.
-  3. **Contact & Payment**: Form capture for name, email, billing details, payment method selection (Card, Pay Later), mock card preview, and summary breakdown.
-- Uses **TanStack search parameters** (`searchSchema` validated via Zod) to persist user configurations directly in the address bar. This allows refreshing and backward navigations without data loss:
-  `{ step: "evening", occasion: "anniversary", chef: "elena-moretti", packageId: "p1", date: "2026-07-18", time: "19:30" }`
-
-### Dashboard (`dashboard.tsx`)
-- Visual dashboard interface prototype.
-- Displays upcoming booked events containing payment status tags, menu details, and message prompts.
-- Displays mock chat lists mimicking messaging threads.
-
-### Editorial Pages (`our-story.tsx`, `for-chefs.tsx`, `chef-handbook.tsx`, `payouts.tsx`)
-- **`our-story.tsx`**: Visual milestones and values of the founders.
-- **`for-chefs.tsx`**: Features application dialog modal form asking for culinary styles, links, and pricing. Shows benefits (Set own prices, Build reputation, We handle rest), 4 steps how it works (Apply, Get approved, Publish gigs, Start cooking), 85% payout details, and testimonials from chefs (Elena M., Amara O., Leon P.).
-- **`chef-handbook.tsx` & `payouts.tsx`**: Clean breakdowns of platform policies, payment timelines (48h payouts), cancellation policies, and the standard **85% chef / 15% platform split**.
-
----
-
-## 6. Static Data Specifications (`src/data/`)
-
-### Chef Schema (`src/data/chefs.ts`)
-```typescript
-export type Package = {
-  id: string;
-  name: string;
-  courses: number;
-  price: number;
-  description: string;
-  inclusions: string[];
-};
-
-export type Review = {
-  author: string;
-  rating: number;
-  date: string;
-  body: string;
-};
-
-export type Chef = {
-  slug: string;
-  name: string;
-  city: string;
-  cuisine: string;
-  specialty: string;
-  headline: string;
-  bio: string;
-  portrait: string;
-  gallery: string[];
-  rating: number;
-  reviewCount: number;
-  startingPrice: number;
-  packages: Package[];
-  reviews: Review[];
-};
-```
-Preloaded with 6 mock profiles (`Elena Moretti` (Italian), `Jules Tanaka` (Japanese Kaiseki), `Amara Okafor` (West African), `Matteo Silva` (Peruvian), `Isabelle Laurent` (French Modern Bistrot), `Priya Varma` (Modern Indian)).
-
-### Journal Post Schema (`src/data/journal.ts`)
-```typescript
-export type Post = {
-  slug: string;
-  n: string; // Double digit index label (e.g. "01")
-  kicker: string;
-  title: string;
-  excerpt: string;
-  body: string[]; // Array of paragraph strings
-  image: string;
-  read: string; // Reading time estimation (e.g. "6 min")
-  date: string;
-  category: "First dates" | "Anniversaries" | "Proposals" | "Everyday" | "Letters";
-};
-```
-Stores highly editorial blog entries regarding home cooking guidelines, romantic suggestions, proposals timing, and reviews.
-
----
-
-## 7. Model Context Protocol (MCP) Integration
-
-The application hosts a native MCP server mounted on the API path `/mcp` via TanStack Start server handlers.
-
-### Key MCP Setup Files
-
-- **`src/routes/mcp.ts`**
-  Declares the `/mcp` server endpoint, intercepting requests and routing them to the custom TanStack MCP handler wrapper using:
-  ```typescript
-  createTanStackMcpHandler(mcp, { resourcePath: "/mcp", metadataPath: "/.well-known/oauth-protected-resource" })
-  ```
-- **`src/lib/mcp/index.ts`**
-  Initializes the MCP server named `love-at-first-sight-mcp` and hooks up the available tools:
-  ```typescript
-  import { defineMcp } from "@lovable.dev/mcp-js";
-  export default defineMcp({
-    name: "love-at-first-sight-mcp",
-    title: "Love at First Sight",
-    version: "0.1.0",
-    tools: [listChefs, getChef, listPackages]
-  });
-  ```
-
-### Exposed Read-Only Tools (`src/lib/mcp/tools/`)
-
-1. **`list_chefs`**
-   - **Arguments**: `city?: string` (optional), `cuisine?: string` (optional).
-   - **Response**: List of chefs matching search parameters (slug, name, location, cuisine type, review scores, starting price).
-2. **`get_chef`**
-   - **Arguments**: `slug: string` (required).
-   - **Response**: The complete chef object profile (bio details, full reviews, and associated packages).
-3. **`list_packages`**
-   - **Arguments**: `chefSlug?: string` (optional), `maxPrice?: number` (optional).
-   - **Response**: Flat collection of packages across all roster profiles for comparison.
-
----
-
-## 8. Next.js Conversion Guidelines
-
-To successfully translate this codebase to Next.js App Router in `lafs-next`:
-
-### Routing & Data Loading
-1. **Dynamic Pages**: Map TanStack dynamic routes to App Router dynamic directory segments:
-   - `src/routes/chefs.$slug.tsx` -> `app/chefs/[slug]/page.tsx`
-   - `src/routes/journal.$slug.tsx` -> `app/journal/[slug]/page.tsx`
-2. **Search Parameters**: Map Zod search parameter validation to Next.js search parameters.
-   - For `/book`, extract params inside `page.tsx` or using `useSearchParams()` hooks inside client-side templates, validating them via the same Zod schema.
-3. **Static Data Loader**: Read the static databases (`src/data/chefs.ts` and `src/data/journal.ts`) directly inside React Server Components or local page views.
-
-### CSS & Custom Configuration
-1. **Tailwind v4 Integration**: Ensure Next.js PostCSS config resolves `@import "tailwindcss"` properly. Import the custom configuration classes, custom animations, font faces, and variables from the `styles.css` file into Next's global stylesheet (`app/globals.css`).
-2. **Global Components**:
-   - Wrap the Next.js `layout.tsx` children in the custom layout framework containing the Navbar, Footer, Lightbox Context Provider, and the Spring-loaded Custom Cursor.
-
-### Animations
-1. **Framer Motion**: Add the `"use client"` directive to `CustomCursor`, `CinematicHero`, `Lightbox`, and all other transition wrappers, as they use browser-specific layout hooks (`window.matchMedia`, `mousemove`, mouse events).
