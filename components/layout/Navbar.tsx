@@ -4,19 +4,32 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  BookOpen,
+  Utensils,
+  ChefHat,
+  Image as ImageIcon,
+  FileText,
+  Mail,
+  HelpCircle,
+  User,
+  ArrowRight,
+} from "lucide-react";
 
 const linksLeft = [
-  { n: "01", to: "/", label: "Home" },
-  { n: "02", to: "/our-story", label: "About" },
-  { n: "03", to: "/chefs", label: "Chefs" },
-  { n: "04", to: "/for-chefs", label: "For Chefs" },
+  { n: "01", to: "/", label: "Home", Icon: Home },
+  { n: "02", to: "/our-story", label: "About", Icon: BookOpen },
+  { n: "03", to: "/chefs", label: "Chefs", Icon: Utensils },
+  { n: "04", to: "/for-chefs", label: "For Chefs", Icon: ChefHat },
 ] as const;
 
 const linksRight = [
-  { n: "05", to: "/gallery", label: "Gallery" },
-  { n: "06", to: "/journal", label: "Journal" },
-  { n: "07", to: "/contact", label: "Contact" },
+  { n: "05", to: "/gallery", label: "Gallery", Icon: ImageIcon },
+  { n: "06", to: "/journal", label: "Journal", Icon: FileText },
+  { n: "07", to: "/contact", label: "Contact", Icon: Mail },
 ] as const;
 
 const links = [...linksLeft, ...linksRight] as const;
@@ -54,7 +67,6 @@ export function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 pointer-events-none">
-      {/* Extra/BuildForever-style bar — brand left, nav+CTA right */}
       <motion.div
         initial={{ y: -12, opacity: 0, filter: "blur(8px)" }}
         animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
@@ -69,7 +81,7 @@ export function Navbar() {
           paddingBottom: scrolled ? 12 : 0,
         }}
       >
-        {/* Desktop: single continuous nav pill spanning the full width */}
+        {/* Desktop navbar */}
         <nav
           aria-label="Primary"
           className="hidden md:flex items-center gap-1 rounded-full border border-cream/20 bg-burgundy-deep/60 backdrop-blur-xl p-1.5 mx-auto"
@@ -89,7 +101,7 @@ export function Navbar() {
             );
           })}
 
-          {/* Center spacer — the overhanging logo sits above this */}
+          {/* Center logo spacer */}
           <div className="relative shrink-0" style={{ width: scrolled ? 88 : 108, height: 36 }} aria-hidden>
             <Link
               href="/"
@@ -130,60 +142,70 @@ export function Navbar() {
           </Link>
         </nav>
 
-        {/* Mobile: brand mark on the left so hamburger stays on the right */}
+        {/* Mobile: large logo in the left corner */}
         <Link
           href="/"
-          className="md:hidden inline-flex items-center justify-center h-11 w-11 rounded-full bg-cream ring-1 ring-cream/40 overflow-hidden shadow-[0_6px_20px_-6px_rgba(0,0,0,0.35)]"
           aria-label="Love at First Sight — home"
           onClick={() => setOpen(false)}
+          className="md:hidden inline-flex items-center justify-center rounded-full bg-cream ring-4 ring-burgundy/30 overflow-hidden shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)] transition-transform duration-300 active:scale-[0.97] shrink-0"
+          style={{ height: scrolled ? 72 : 88, width: scrolled ? 72 : 88 }}
         >
-          <img src="/logo.webp" alt="" className="h-full w-full object-cover" draggable={false} />
+          <img src="/logo.webp" alt="" className="h-full w-full object-cover select-none" draggable={false} />
         </Link>
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger button */}
         <button
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-[12px] border border-cream/30 bg-burgundy-deep/70 backdrop-blur-md text-cream transition-transform duration-[160ms] ease-out hover:border-cream active:scale-[0.94]"
+          className="md:hidden inline-flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-cream/35 bg-burgundy-deep/80 backdrop-blur-md text-cream shadow-md transition-transform duration-[160ms] ease-out hover:border-cream active:scale-[0.94]"
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </motion.div>
 
-      {/* Full-screen mobile menu overlay */}
+      {/* Mobile full-screen menu overlay */}
       <div
         aria-hidden={!open}
         className={`pointer-events-auto fixed inset-0 z-40 bg-burgundy-deep transition-opacity duration-300 ease-out ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="container-page flex h-full flex-col justify-between pt-24 pb-16 overflow-y-auto">
+        <div className="container-page flex h-full flex-col justify-between pt-[150px] pb-16 overflow-y-auto">
           <nav>
             <ul className="space-y-3">
-              {links.map((l, i) => (
-                <li
-                  key={l.to}
-                  className="border-t border-cream/15 pt-3"
-                  style={{
-                    opacity: open ? 1 : 0,
-                    transform: open ? "translateY(0)" : "translateY(8px)",
-                    transition: `opacity 400ms ease-out ${i * 60}ms, transform 400ms ease-out ${i * 60}ms`,
-                  }}
-                >
-                  <Link
-                    href={l.to}
-                    onClick={() => setOpen(false)}
-                    className="group flex items-baseline gap-5"
+              {links.map((l, i) => {
+                const Icon = l.Icon;
+                return (
+                  <li
+                    key={l.to}
+                    className="border-t border-cream/15 pt-3"
+                    style={{
+                      opacity: open ? 1 : 0,
+                      transform: open ? "translateY(0)" : "translateY(8px)",
+                      transition: `opacity 400ms ease-out ${i * 60}ms, transform 400ms ease-out ${i * 60}ms`,
+                    }}
                   >
-                    <span className="num">{l.n}</span>
-                    <span className="text-cream text-[clamp(1.75rem,6vw,4rem)] leading-none tracking-[-0.03em] font-display font-bold transition-colors group-hover:text-cream/80">
-                      {l.label}
-                    </span>
-                  </Link>
-                </li>
-              ))}
+                    <Link
+                      href={l.to}
+                      onClick={() => setOpen(false)}
+                      className="group flex items-center justify-between py-1"
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className="num text-cream/40">{l.n}</span>
+                        <div className="flex items-center gap-3">
+                          <Icon className="h-5 w-5 text-gold shrink-0 transition-transform group-hover:scale-110" />
+                          <span className="text-cream text-[clamp(1.5rem,5vw,3.5rem)] leading-none tracking-[-0.03em] font-display font-bold transition-colors group-hover:text-gold">
+                            {l.label}
+                          </span>
+                        </div>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-cream/30 group-hover:text-gold group-hover:translate-x-1 transition-all" />
+                    </Link>
+                  </li>
+                );
+              })}
               <li
                 className="border-t border-cream/15 pt-3"
                 style={{
@@ -197,12 +219,18 @@ export function Navbar() {
                 <Link
                   href="/how-it-works"
                   onClick={() => setOpen(false)}
-                  className="group flex items-baseline gap-5"
+                  className="group flex items-center justify-between py-1"
                 >
-                  <span className="num">08</span>
-                  <span className="text-cream text-[clamp(1.75rem,6vw,4rem)] leading-none tracking-[-0.03em] font-display font-bold transition-colors group-hover:text-cream/80">
-                    How it works
-                  </span>
+                  <div className="flex items-center gap-4">
+                    <span className="num text-cream/40">08</span>
+                    <div className="flex items-center gap-3">
+                      <HelpCircle className="h-5 w-5 text-gold shrink-0 transition-transform group-hover:scale-110" />
+                      <span className="text-cream text-[clamp(1.5rem,5vw,3.5rem)] leading-none tracking-[-0.03em] font-display font-bold transition-colors group-hover:text-gold">
+                        How it works
+                      </span>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-cream/30 group-hover:text-gold group-hover:translate-x-1 transition-all" />
                 </Link>
               </li>
             </ul>
@@ -211,14 +239,16 @@ export function Navbar() {
             <Link
               href="/dashboard"
               onClick={() => setOpen(false)}
-              className="flex h-14 w-full items-center justify-center rounded-[14px] bg-cream text-burgundy text-[12px] font-mono uppercase tracking-[0.14em] transition-colors hover:bg-[#F0E8DE] active:scale-[0.97]"
+              className="flex h-14 w-full items-center justify-center gap-2 rounded-[14px] bg-cream text-burgundy text-[12px] font-mono uppercase tracking-[0.14em] transition-colors hover:bg-[#F0E8DE] active:scale-[0.97]"
             >
-              Sign in
+              <User className="h-4 w-4 text-burgundy" />
+              <span>Sign in</span>
             </Link>
             <div className="text-cream/70 text-sm">
               <div className="label">Are you a chef?</div>
-              <Link href="/for-chefs" onClick={() => setOpen(false)} className="mt-2 block text-cream hover:text-cream/80">
-                Apply to join →
+              <Link href="/for-chefs" onClick={() => setOpen(false)} className="mt-2 inline-flex items-center gap-1.5 text-cream hover:text-gold transition-colors">
+                <span>Apply to join</span>
+                <ArrowRight className="h-3.5 w-3.5 text-gold" />
               </Link>
             </div>
           </div>

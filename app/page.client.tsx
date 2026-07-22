@@ -13,6 +13,8 @@ import {
 import type { LightboxItem } from "@/components/ui-lafs";
 import { chefs } from "@/data/chefs";
 
+import { HOME_HERO } from "@/data/site-content";
+
 const IMG = (id: string, w = 1800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
@@ -66,12 +68,12 @@ export default function Home() {
       <CinematicHero
         image={HERO_IMG}
         video={HERO_VIDEO}
-        badge="Private Chefs for Unforgettable Moments"
-        headline="Private Chef Experiences Worth Falling In Love With"
-        caption="Celebrate life’s most meaningful moments with exceptional chefs, personalized menus, and unforgettable hospitality—all in the comfort of your home."
+        badge={HOME_HERO.badge}
+        headline={HOME_HERO.headline}
+        caption={HOME_HERO.caption}
       >
-        <CircleButton to="/chefs" icon="grid">Browse chefs</CircleButton>
-        <CircleButton to="/how-it-works" variant="secondary" icon="play">How it works</CircleButton>
+        <CircleButton to="/chefs" icon="grid">{HOME_HERO.primaryCta}</CircleButton>
+        <CircleButton to="/how-it-works" variant="secondary" icon="play">{HOME_HERO.secondaryCta}</CircleButton>
         <Link
           href="/dashboard"
           className="inline-flex h-[44px] items-center rounded-[16px] px-4 text-[13px] font-medium tracking-tight text-cream/85 hover:text-cream transition-colors underline-offset-4 hover:underline"

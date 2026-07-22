@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CONTACT_DETAILS } from "@/data/site-content";
 
 export function Footer() {
   const pathname = usePathname();
@@ -62,11 +63,29 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Follow */}
+        <div className="mt-14 border-t border-cream/15 pt-8">
+          <div className="label">Follow</div>
+          <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-[14px]">
+            <li>
+              <a
+                href={CONTACT_DETAILS.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-cream transition-colors"
+              >
+                Instagram · @{CONTACT_DETAILS.instagram}
+              </a>
+            </li>
+          </ul>
+        </div>
+
         {/* Bottom bar */}
         <div className="mt-20 grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-6 border-t border-cream/15 pt-6 text-[11px] font-mono uppercase tracking-[0.14em] text-cream/50">
           <div className="truncate">
             © {new Date().getFullYear()} Love at First Sight
             <sup className="ml-1 text-[9px] tracking-[0.14em]">℠</sup>
+            <span className="mx-3 text-cream/25">·</span>
           </div>
           <div className="shrink-0 text-cream/60">a marketplace, not a restaurant</div>
         </div>
