@@ -83,7 +83,7 @@ export function Navbar() {
         {/* Desktop navbar */}
         <nav
           aria-label="Primary"
-          className="hidden md:flex items-center gap-1 rounded-full border border-cream/20 bg-burgundy-deep/60 backdrop-blur-xl p-1.5 mx-auto"
+          className="hidden lg:flex items-center gap-1 rounded-full border border-cream/20 bg-burgundy-deep/60 backdrop-blur-xl p-1.5 mx-auto"
         >
           {linksLeft.map((l) => {
             const active = pathname === l.to || (l.to !== "/" && pathname.startsWith(l.to + "/"));
@@ -144,7 +144,7 @@ export function Navbar() {
           href="/"
           aria-label="Love at First Sight — home"
           onClick={() => setOpen(false)}
-          className="md:hidden inline-flex items-center justify-center rounded-full bg-cream ring-4 ring-burgundy/30 overflow-hidden shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)] transition-transform duration-300 active:scale-[0.97] shrink-0"
+          className="lg:hidden inline-flex items-center justify-center rounded-full bg-cream ring-4 ring-burgundy/30 overflow-hidden shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)] transition-transform duration-300 active:scale-[0.97] shrink-0"
           style={{ height: scrolled ? 79 : 96, width: scrolled ? 79 : 96 }}
         >
           <img src="/logo.webp" alt="" className="h-full w-full object-cover select-none" draggable={false} />
@@ -155,7 +155,7 @@ export function Navbar() {
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
-          className="md:hidden inline-flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-cream/35 bg-burgundy-deep/80 backdrop-blur-md text-cream shadow-md transition-transform duration-[160ms] ease-out hover:border-cream active:scale-[0.94]"
+          className="lg:hidden inline-flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-cream/35 bg-burgundy-deep/80 backdrop-blur-md text-cream shadow-md transition-transform duration-[160ms] ease-out hover:border-cream active:scale-[0.94]"
           onClick={() => setOpen((v) => !v)}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}

@@ -3,7 +3,7 @@ import { Inter, Geist_Mono, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { LightboxProvider, CustomCursor } from "@/components/ui-lafs";
+import { LightboxProvider } from "@/components/ui-lafs";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -39,7 +39,6 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <LightboxProvider>
-          <CustomCursor />
           <div className="flex min-h-screen flex-col bg-background text-foreground">
             <Navbar />
             <main className="flex-1">{children}</main>

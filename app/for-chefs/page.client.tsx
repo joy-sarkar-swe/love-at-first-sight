@@ -422,14 +422,11 @@ function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: b
     f.headline.trim().length > 3 && f.headline.length <= 90 &&
     f.bio.trim().length >= 120 &&
     f.signatureDishes.filter((d) => d.name.trim()).length >= 1 &&
-    f.offersCustomMenu !== "" &&
-    f.sample.name.trim() !== "" && Number(f.sample.courses) > 0 &&
-    Number(f.sample.price) > 0 && f.sample.inclusions.trim() !== "";
+    f.offersCustomMenu !== "";
   const step3Valid =
     !!f.portraitName &&
     f.hasFoodSafety !== "" &&
     f.hasInsurance !== "" &&
-    f.equipment.length >= 1 &&
     f.availabilityDays.length >= 1 && !!f.leadTime &&
     f.pledge && f.consent;
 
@@ -614,13 +611,11 @@ function Step1({ f, set, showErrors }: StepProps) {
 }
 
 function Step2({ f, set, showErrors }: StepProps) {
-  const setDish = (i: number, patch: Partial<Dish>) => {
-    const next = f.signatureDishes.map((d, idx) => idx === i ? { ...d, ...patch } : d);
-    set("signatureDishes", next);
+  const dishesText = f.signatureDishes.map((d) => d.name).filter(Boolean).join("\n");
+  const onDishesChange = (v: string) => {
+    const lines = v.split("\n").map((s) => s.trim()).filter(Boolean).slice(0, 5);
+    set("signatureDishes", lines.length ? lines.map((name) => ({ name, note: "" })) : [{ name: "", note: "" }]);
   };
-  const addDish = () => { if (f.signatureDishes.length < 5) set("signatureDishes", [...f.signatureDishes, { name: "", note: "" }]); };
-  const removeDish = (i: number) => set("signatureDishes", f.signatureDishes.filter((_, idx) => idx !== i));
-  const setSample = (patch: Partial<ChefApplication["sample"]>) => set("sample", { ...f.sample, ...patch });
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -644,14 +639,16 @@ function Step2({ f, set, showErrors }: StepProps) {
         {showErrors && !f.years && <p className={errCls}>Choose an experience range.</p>}
       </div>
       <div>
-        <Label className={labelCls}>Do you offer custom menus?</Label>
-        <div className="mt-2 flex gap-2">
-          {(["yes", "no"] as const).map((v) => (
-            <button key={v} type="button" onClick={() => set("offersCustomMenu", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.offersCustomMenu === v ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
-              {v}
-            </button>
-          ))}
-        </div>
+        <Label className={labelCls}>Custom menus?</Label>
+        <Select value={f.offersCustomMenu} onValueChange={(v) => set("offersCustomMenu", v as "yes" | "no")}>
+          <SelectTrigger className={`${inputCls} data-[placeholder]:text-cream/40`}>
+            <SelectValue placeholder="Yes or no" />
+          </SelectTrigger>
+          <SelectContent className="bg-cream text-ink border-ink/15">
+            <SelectItem value="yes" className="text-ink focus:bg-blush/50 focus:text-ink">Yes, on request</SelectItem>
+            <SelectItem value="no" className="text-ink focus:bg-blush/50 focus:text-ink">No, set menus only</SelectItem>
+          </SelectContent>
+        </Select>
         {showErrors && !f.offersCustomMenu && <p className={errCls}>Choose yes or no.</p>}
       </div>
       <div className="col-span-2">
@@ -664,51 +661,11 @@ function Step2({ f, set, showErrors }: StepProps) {
         <Textarea id="ap-bio" value={f.bio} onChange={(e) => set("bio", e.target.value)} rows={4} placeholder="Where you trained, how you cook, what you'd bring to a private table…" className="mt-2 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
         {showErrors && f.bio.trim().length < 120 && <p className={errCls}>Please write at least 120 characters.</p>}
       </div>
-
       <div className="col-span-2">
-        <div className="flex items-center justify-between">
-          <Label className={labelCls}>Signature dishes ({f.signatureDishes.length}/5)</Label>
-          <button type="button" onClick={addDish} disabled={f.signatureDishes.length >= 5} className="text-[11px] font-mono uppercase tracking-[0.14em] text-gold hover:text-gold/80 disabled:opacity-40 disabled:cursor-not-allowed">
-            + Add dish
-          </button>
-        </div>
-        <div className="mt-2 space-y-2">
-          {f.signatureDishes.map((d, i) => (
-            <div key={i} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 items-start">
-              <Input value={d.name} onChange={(e) => setDish(i, { name: e.target.value })} placeholder={`Dish ${i + 1} name`} className="h-11 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
-              <Input value={d.note} onChange={(e) => setDish(i, { note: e.target.value })} placeholder="Short note (optional)" className="h-11 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
-              <button type="button" onClick={() => removeDish(i)} disabled={f.signatureDishes.length <= 1} className="h-11 px-3 text-[11px] font-mono uppercase tracking-[0.14em] text-cream/60 hover:text-cream disabled:opacity-30 disabled:cursor-not-allowed">
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
+        <Label htmlFor="ap-dishes" className={labelCls}>Signature dishes <span className="text-cream/40">(one per line, up to 5)</span></Label>
+        <Textarea id="ap-dishes" value={dishesText} onChange={(e) => onDishesChange(e.target.value)} rows={4} placeholder={"Cacio e pepe\nWood-fired branzino\nTiramisu"} className="mt-2 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
         {showErrors && f.signatureDishes.filter((d) => d.name.trim()).length < 1 && <p className={errCls}>Add at least one signature dish.</p>}
-      </div>
-
-      <div className="col-span-2 rounded-[12px] border border-cream/10 bg-cream/[0.04] p-4">
-        <div className="label text-cream/50">A sample package</div>
-        <div className="mt-3 grid grid-cols-2 gap-3">
-          <div className="col-span-2">
-            <Label htmlFor="pkg-name" className={labelCls}>Package name</Label>
-            <Input id="pkg-name" value={f.sample.name} onChange={(e) => setSample({ name: e.target.value })} placeholder="The Roman Table" className={inputCls} />
-          </div>
-          <div>
-            <Label htmlFor="pkg-courses" className={labelCls}>Courses</Label>
-            <Input id="pkg-courses" type="number" min={1} value={f.sample.courses} onChange={(e) => setSample({ courses: e.target.value })} placeholder="4" className={inputCls} />
-          </div>
-          <div>
-            <Label htmlFor="pkg-price" className={labelCls}>Price per person ($)</Label>
-            <Input id="pkg-price" type="number" min={1} value={f.sample.price} onChange={(e) => setSample({ price: e.target.value })} placeholder="220" className={inputCls} />
-          </div>
-          <div className="col-span-2">
-            <Label htmlFor="pkg-inc" className={labelCls}>What's included</Label>
-            <Textarea id="pkg-inc" rows={2} value={f.sample.inclusions} onChange={(e) => setSample({ inclusions: e.target.value })} placeholder="4 courses, wine pairing notes, full cleanup" className="mt-2 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
-          </div>
-        </div>
-        {showErrors && (!f.sample.name || !f.sample.courses || !f.sample.price || !f.sample.inclusions) && (
-          <p className={errCls}>Complete every field in the sample package.</p>
-        )}
+        <p className="mt-2 text-[11px] text-cream/40">Sample packages and pricing come later — you'll set those in the chef dashboard after approval.</p>
       </div>
     </div>
   );
@@ -718,7 +675,6 @@ function Step3({ f, set, showErrors }: StepProps) {
   const MAX = 10 * 1024 * 1024;
   const okImage = (file: File) => /^image\/(jpeg|png|webp)$/.test(file.type) && file.size <= MAX;
   const [portraitErr, setPortraitErr] = useState<string>("");
-  const [galleryErr, setGalleryErr] = useState<string>("");
 
   const onPortrait = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -726,143 +682,77 @@ function Step3({ f, set, showErrors }: StepProps) {
     if (!okImage(file)) { setPortraitErr("Use a JPG, PNG or WEBP under 10MB."); return; }
     setPortraitErr(""); set("portraitName", file.name);
   };
-  const onGallery = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    const good = files.filter(okImage);
-    if (good.length !== files.length) setGalleryErr("Some files were skipped (need JPG/PNG/WEBP under 10MB).");
-    else setGalleryErr("");
-    const next = [...f.galleryNames, ...good.map((g) => g.name)].slice(0, 6);
-    set("galleryNames", next);
-  };
-
   const toggle = <T,>(list: T[], v: T): T[] => list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
 
   return (
-    <div className="space-y-5">
-      {/* Photos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex flex-col justify-end">
-          <div className="min-h-[2.25rem] flex items-end mb-1">
-            <Label className={labelCls}>Profile photo</Label>
-          </div>
-          <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-cream/25 bg-cream/[0.04] px-4 text-[12px] text-cream/70 hover:border-cream/60 cursor-pointer">
-            <span className="truncate">{f.portraitName || "Choose an image (JPG/PNG/WEBP, ≤10MB)"}</span>
-            <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onPortrait} />
-          </label>
-          {portraitErr && <p className={errCls}>{portraitErr}</p>}
-          {showErrors && !f.portraitName && <p className={errCls}>Upload a profile photo.</p>}
-        </div>
-        <div className="flex flex-col justify-end">
-          <div className="min-h-[2.25rem] flex items-end mb-1">
-            <Label className={labelCls}>Food & plating photos <span className="text-cream/40">(optional, up to 6)</span></Label>
-          </div>
-          <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-cream/25 bg-cream/[0.04] px-4 text-[12px] text-cream/70 hover:border-cream/60 cursor-pointer">
-            <span className="truncate">{f.galleryNames.length ? `${f.galleryNames.length} file(s) added` : "Add photos"}</span>
-            <input type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" onChange={onGallery} />
-          </label>
-          {galleryErr && <p className={errCls}>{galleryErr}</p>}
-        </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="col-span-2">
+        <Label className={labelCls}>Profile photo</Label>
+        <label className="mt-2 flex h-11 items-center justify-between rounded-[12px] border border-dashed border-cream/25 bg-cream/[0.04] px-4 text-[12px] text-cream/70 hover:border-cream/60 cursor-pointer">
+          <span className="truncate">{f.portraitName || "Choose an image (JPG/PNG/WEBP, ≤10MB)"}</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onPortrait} />
+        </label>
+        {portraitErr && <p className={errCls}>{portraitErr}</p>}
+        {showErrors && !f.portraitName && <p className={errCls}>Upload a profile photo.</p>}
       </div>
 
-      {/* Food safety */}
       <div>
-        <Label className={labelCls}>Food-safety / food-handler certification</Label>
-        <div className="mt-2 flex gap-2">
-          {(["yes", "no"] as const).map((v) => (
-            <button key={v} type="button" onClick={() => set("hasFoodSafety", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.hasFoodSafety === v ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
-              {v}
-            </button>
-          ))}
-        </div>
-        {f.hasFoodSafety === "yes" && (
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-cream/25 bg-cream/[0.04] px-4 text-[12px] text-cream/70 hover:border-cream/60 cursor-pointer">
-              <span className="truncate">{f.foodSafetyCertName || "Upload certificate (optional)"}</span>
-              <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => set("foodSafetyCertName", e.target.files?.[0]?.name ?? "")} />
-            </label>
-            <Input type="date" value={f.foodSafetyExpiry} onChange={(e) => set("foodSafetyExpiry", e.target.value)} className={inputCls} placeholder="Expiry" />
-          </div>
-        )}
+        <Label className={labelCls}>Food-safety cert</Label>
+        <Select value={f.hasFoodSafety} onValueChange={(v) => set("hasFoodSafety", v as "yes" | "no")}>
+          <SelectTrigger className={`${inputCls} data-[placeholder]:text-cream/40`}>
+            <SelectValue placeholder="Yes or no" />
+          </SelectTrigger>
+          <SelectContent className="bg-cream text-ink border-ink/15">
+            <SelectItem value="yes" className="text-ink focus:bg-blush/50 focus:text-ink">Yes</SelectItem>
+            <SelectItem value="no" className="text-ink focus:bg-blush/50 focus:text-ink">No</SelectItem>
+          </SelectContent>
+        </Select>
         {showErrors && !f.hasFoodSafety && <p className={errCls}>Answer yes or no.</p>}
       </div>
-
-      {/* Background */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="md:col-span-2">
-          <Label htmlFor="ap-bg" className={labelCls}>Professional background <span className="text-cream/40">(optional)</span></Label>
-          <Textarea id="ap-bg" value={f.background} onChange={(e) => set("background", e.target.value)} rows={3} placeholder="Restaurants, training, awards…" className="mt-2 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
-        </div>
-        <div className="flex flex-col justify-end">
-          <div className="min-h-[2.25rem] flex items-end mb-1">
-            <Label htmlFor="ap-biz" className={labelCls}>Business / LLC name <span className="text-cream/40">(optional)</span></Label>
-          </div>
-          <Input id="ap-biz" value={f.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder="Your kitchen, LLC" className={inputCls} />
-        </div>
-        <div className="flex flex-col justify-end">
-          <div className="min-h-[2.25rem] flex items-end mb-1">
-            <Label className={labelCls}>Liability insurance</Label>
-          </div>
-          <div className="flex gap-2">
-            {(["yes", "no"] as const).map((v) => (
-              <button key={v} type="button" onClick={() => set("hasInsurance", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.hasInsurance === v ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
-                {v}
-              </button>
-            ))}
-          </div>
-          {showErrors && !f.hasInsurance && <p className={errCls}>Answer yes or no.</p>}
-        </div>
+      <div>
+        <Label className={labelCls}>Liability insurance</Label>
+        <Select value={f.hasInsurance} onValueChange={(v) => set("hasInsurance", v as "yes" | "no")}>
+          <SelectTrigger className={`${inputCls} data-[placeholder]:text-cream/40`}>
+            <SelectValue placeholder="Yes or no" />
+          </SelectTrigger>
+          <SelectContent className="bg-cream text-ink border-ink/15">
+            <SelectItem value="yes" className="text-ink focus:bg-blush/50 focus:text-ink">Yes</SelectItem>
+            <SelectItem value="no" className="text-ink focus:bg-blush/50 focus:text-ink">No</SelectItem>
+          </SelectContent>
+        </Select>
+        {showErrors && !f.hasInsurance && <p className={errCls}>Answer yes or no.</p>}
       </div>
 
-      {/* Equipment */}
       <div>
-        <Label className={labelCls}>Equipment your cooking needs</Label>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {EQUIPMENT_REQUIREMENTS.map((eq) => {
-            const on = f.equipment.includes(eq);
+        <Label className={labelCls}>Typical lead time</Label>
+        <Select value={f.leadTime} onValueChange={(v) => set("leadTime", v)}>
+          <SelectTrigger className={`${inputCls} data-[placeholder]:text-cream/40`}>
+            <SelectValue placeholder="Select lead time" />
+          </SelectTrigger>
+          <SelectContent className="bg-cream text-ink border-ink/15">
+            {LEAD_TIMES.map((t) => (
+              <SelectItem key={t} value={t} className="text-ink focus:bg-blush/50 focus:text-ink">{t}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {showErrors && !f.leadTime && <p className={errCls}>Choose a lead time.</p>}
+      </div>
+      <div>
+        <Label className={labelCls}>Available days</Label>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {DAYS.map((d) => {
+            const on = f.availabilityDays.includes(d);
             return (
-              <button key={eq} type="button" onClick={() => set("equipment", toggle(f.equipment, eq))} className={`rounded-[10px] border px-3 py-2 text-[11px] font-mono uppercase tracking-[0.14em] transition-colors ${on ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
-                {eq}
+              <button key={d} type="button" onClick={() => set("availabilityDays", toggle(f.availabilityDays, d))} className={`h-11 min-w-[44px] rounded-[10px] border px-2 text-[11px] font-mono uppercase tracking-[0.12em] transition-colors ${on ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
+                {d}
               </button>
             );
           })}
         </div>
-        {showErrors && f.equipment.length < 1 && <p className={errCls}>Select at least one.</p>}
+        {showErrors && f.availabilityDays.length < 1 && <p className={errCls}>Pick at least one day.</p>}
       </div>
 
-      {/* Availability */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label className={labelCls}>Available days</Label>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {DAYS.map((d) => {
-              const on = f.availabilityDays.includes(d);
-              return (
-                <button key={d} type="button" onClick={() => set("availabilityDays", toggle(f.availabilityDays, d))} className={`h-10 min-w-[52px] rounded-[10px] border px-3 text-[12px] font-mono uppercase tracking-[0.12em] transition-colors ${on ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
-                  {d}
-                </button>
-              );
-            })}
-          </div>
-          {showErrors && f.availabilityDays.length < 1 && <p className={errCls}>Pick at least one day.</p>}
-        </div>
-        <div>
-          <Label className={labelCls}>Typical lead time</Label>
-          <Select value={f.leadTime} onValueChange={(v) => set("leadTime", v)}>
-            <SelectTrigger className={`${inputCls} data-[placeholder]:text-cream/40`}>
-              <SelectValue placeholder="Select lead time" />
-            </SelectTrigger>
-            <SelectContent className="bg-cream text-ink border-ink/15">
-              {LEAD_TIMES.map((t) => (
-                <SelectItem key={t} value={t} className="text-ink focus:bg-blush/50 focus:text-ink">{t}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {showErrors && !f.leadTime && <p className={errCls}>Choose a lead time.</p>}
-        </div>
-      </div>
-
-      {/* Agreements */}
-      <div className="space-y-3 rounded-[12px] border border-cream/10 bg-cream/[0.04] p-4">
+      <div className="col-span-2 space-y-3 pt-2">
         <label className="flex items-start gap-3 text-[13px] text-cream/80 leading-relaxed cursor-pointer group">
           <button
             type="button"
@@ -879,7 +769,7 @@ function Step3({ f, set, showErrors }: StepProps) {
             <Check className="h-3.5 w-3.5 stroke-[2.5]" />
           </button>
           <span className="select-none group-hover:text-cream transition-colors">
-            I agree to serve every client with professionalism, maintain food-safety standards, and represent Love at First Sight with excellence.
+            I agree to serve every client with professionalism and maintain food-safety standards.
           </span>
         </label>
         <label className="flex items-start gap-3 text-[13px] text-cream/80 leading-relaxed cursor-pointer group">
@@ -902,6 +792,7 @@ function Step3({ f, set, showErrors }: StepProps) {
           </span>
         </label>
         {showErrors && (!f.pledge || !f.consent) && <p className={errCls}>Both checkboxes are required.</p>}
+        <p className="text-[11px] text-cream/40 pt-1">Equipment needs, gallery photos and business details are collected in the chef dashboard after approval.</p>
       </div>
     </div>
   );

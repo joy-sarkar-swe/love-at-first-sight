@@ -29,6 +29,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -75,6 +82,17 @@ const emptyCustom: CustomMenuBrief = { cuisine: "", dietary: "", allergies: "", 
 
 type Prefs = { dietary: string; allergies: string; guests: string };
 const emptyPrefs: Prefs = { dietary: "", allergies: "", guests: "" };
+
+const EXTRA_EQUIPMENT_OPTIONS: { id: string; label: string; note: string }[] = [
+  { id: "dinnerware", label: "Full dinner set for our guest count", note: "Plates, bowls, cutlery, water & wine glasses" },
+  { id: "portable-induction", label: "Portable induction burner", note: "For chefs who need extra heat surface" },
+  { id: "grill", label: "Outdoor grill or plancha", note: "For live-fire menus" },
+  { id: "serving-platters", label: "Serving platters & boards", note: "Presentation-grade" },
+  { id: "linens", label: "Table linens & napkins", note: "Cream / white, pressed" },
+  { id: "candles", label: "Candles & table styling", note: "Warm, low-flame set" },
+  { id: "stemware", label: "Wine & cocktail stemware", note: "Coupe, wine, tumblers" },
+  { id: "chef-toolkit", label: "Chef's specialty toolkit", note: "Knives, torches, sous-vide, etc." },
+];
 
 export default function BookingPage() {
   return (
@@ -130,6 +148,7 @@ function BookingFlow() {
   const [kitchenPhotos, setKitchenPhotos] = useState<{ file: File; url: string }[]>([]);
   const [customBrief, setCustomBrief] = useState<CustomMenuBrief>(emptyCustom);
   const [prefs, setPrefs] = useState<Prefs>(emptyPrefs);
+  const [extraEquipment, setExtraEquipment] = useState<string[]>([]);
 
   useEffect(() => {
     setDraftOccasion(occasion);
@@ -313,6 +332,8 @@ function BookingFlow() {
                   setAnswers={setKitchen}
                   photos={kitchenPhotos}
                   setPhotos={setKitchenPhotos}
+                  extraEquipment={extraEquipment}
+                  setExtraEquipment={setExtraEquipment}
                   onNext={() => goto({ step: "payment" })}
                   onBackToEvening={() => goto({ step: "evening" })}
                   onBackToChef={() => goto({ step: "chef" })}
@@ -371,13 +392,42 @@ function BookingFlow() {
 
 function StepTitle({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
   return (
-    <div className="mb-8">
-      <div className="text-[11px] font-mono uppercase tracking-[0.14em] text-gold">{eyebrow}</div>
-      <h2 className="mt-2 font-display font-bold text-[26px] md:text-[32px] tracking-[-0.03em] text-cream leading-[1.05] lowercase">
-        {title}
-      </h2>
-      {sub && <p className="mt-3 text-[14px] text-cream/65 leading-relaxed">{sub}</p>}
+    <div className="mb-12 md:mb-16 lg:mb-20 grid gap-5 lg:grid-cols-[80px_minmax(0,1fr)] lg:gap-10">
+      <div className="lg:pt-3">
+        <div className="font-mono text-[10.5px] uppercase tracking-[0.28em] text-gold">{eyebrow.replace(/^Step (\d+) of (\d+)$/, "N°0$1 / 0$2")}</div>
+        <div className="mt-3 hidden lg:block h-px w-10 bg-gold/40" />
+      </div>
+      <div className="min-w-0">
+        <h2 className="font-display font-bold lowercase text-[32px] sm:text-[40px] md:text-[46px] lg:text-[54px] tracking-[-0.02em] text-cream leading-[1.02]">{title}</h2>
+        {sub && <p className="mt-4 md:mt-5 max-w-xl text-[14px] md:text-[14.5px] text-cream/70 leading-[1.7]">{sub}</p>}
+      </div>
     </div>
+  );
+}
+
+function EditorialSection({
+  num,
+  title,
+  lede,
+  children,
+}: {
+  num: string;
+  title: string;
+  lede?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="grid gap-5 lg:grid-cols-[80px_minmax(0,1fr)] lg:gap-10">
+      <div className="lg:pt-1">
+        <div className="font-mono text-[10.5px] uppercase tracking-[0.28em] text-gold">{num}</div>
+        <div className="mt-2 hidden lg:block h-px w-8 bg-gold/40" />
+      </div>
+      <div className="min-w-0">
+        <h3 className="font-display font-medium lowercase text-[22px] md:text-[26px] tracking-[-0.01em] text-cream leading-[1.15]">{title}</h3>
+        {lede && <p className="mt-2 max-w-xl text-[13px] text-cream/60 leading-[1.7]">{lede}</p>}
+        <div className="mt-5 md:mt-6">{children}</div>
+      </div>
+    </section>
   );
 }
 
@@ -436,21 +486,21 @@ function EveningStep({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const pickedOccasion = occasion;
-  const setPickedOccasion = setOccasion;
-  const pickedDate = date ? new Date(date + "T00:00:00") : undefined;
-  const setPickedDate = (d: Date | undefined) => {
-    if (d) {
-      setDate(format(d, "yyyy-MM-dd"));
-    } else {
-      setDate(undefined);
-    }
-  };
-  const pickedTime = time || "19:00";
-  const setPickedTime = setTime;
-  const pickedName = guestName || "";
+  const [pickedOccasion, setPickedOccasion] = useState<string | undefined>(occasion);
+  const [customOccasion, setCustomOccasion] = useState<string>(
+    occasion && !occasions.some((o) => o.id === occasion) ? occasion : "",
+  );
+  const isCustomOccasion = pickedOccasion === "__custom__";
+  const [pickedDate, setPickedDate] = useState<Date | undefined>(date ? new Date(date + "T00:00:00") : undefined);
+  const [pickedTime, setPickedTime] = useState<string>(time ?? "19:00");
+  const [pickedName, setPickedName] = useState<string>(guestName ?? "");
 
-  const canContinue = pickedOccasion && pickedDate && pickedTime && pickedName.trim().length > 1;
+  const canContinue =
+    !!pickedOccasion &&
+    (isCustomOccasion ? customOccasion.trim().length > 1 : true) &&
+    !!pickedDate &&
+    !!pickedTime &&
+    pickedName.trim().length > 1;
 
   return (
     <Reveal>
@@ -460,49 +510,75 @@ function EveningStep({
         sub="A few quick details so we can match you with the right chef."
       />
 
-      <div className="space-y-8">
+      <div className="space-y-8 md:space-y-10 lg:pl-[120px] max-w-2xl">
         <div>
           <FieldLabel>Your name (as it will appear on the invitation)</FieldLabel>
           <Input
             value={pickedName}
-            onChange={(e) => onGuestNameChange(e.target.value)}
+            onChange={(e) => {
+              setPickedName(e.target.value);
+              onGuestNameChange(e.target.value);
+            }}
             placeholder="e.g. Jamie & Alex"
-            className="h-11 rounded-[10px] border-cream/20 bg-cream/[0.05] text-cream placeholder:text-cream/35 focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/25"
+            className="h-12 rounded-[10px] border border-cream/20 bg-cream/[0.04] px-4 text-[15px] text-cream placeholder:text-cream/40 focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/20 shadow-none"
           />
-          <div className="mt-1.5 text-[11px] text-cream/50">Watch the invitation on the right fill in as you type.</div>
+          <div className="mt-2 text-[11px] text-cream/45 italic">Watch the invitation fill in as you type.</div>
         </div>
 
         <div>
           <FieldLabel>The occasion</FieldLabel>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
-            {occasions.map((o) => {
-              const active = pickedOccasion === o.id;
-              return (
-                <button
+          <Select
+            value={pickedOccasion}
+            onValueChange={(v) => {
+              setPickedOccasion(v);
+              if (v !== "__custom__") setOccasion(v);
+            }}
+          >
+            <SelectTrigger className="h-12 rounded-[10px] border border-cream/20 bg-cream/[0.04] px-4 text-[15px] text-cream shadow-none focus:ring-2 focus:ring-gold/20 focus:border-gold data-[placeholder]:text-cream/40 [&>svg]:text-cream/60 [&>svg]:opacity-100 [&>span]:truncate">
+              <SelectValue placeholder="What are we celebrating?" />
+            </SelectTrigger>
+            <SelectContent className="bg-paper border-ink/10 text-ink max-h-[60vh]">
+              {occasions.map((o) => (
+                <SelectItem
                   key={o.id}
-                  type="button"
-                  onClick={() => setPickedOccasion(o.id)}
-                  className={cn(
-                    "text-left rounded-[10px] border px-4 py-3.5 transition-all cursor-pointer",
-                    active
-                      ? "border-gold bg-gold/[0.08] shadow-[inset_0_0_0_1px_var(--gold)]"
-                      : "border-cream/15 hover:border-cream/35 bg-cream/[0.03]",
-                  )}
+                  value={o.id}
+                  className="relative flex w-full cursor-pointer select-none flex-col items-start rounded-sm py-2.5 pl-3 pr-9 outline-none focus:bg-burgundy/[0.08] data-[state=checked]:text-burgundy"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className={cn("text-[14px] font-medium", active ? "text-gold" : "text-cream")}>
-                      {o.label}
-                    </div>
-                    {active && <Check className="h-4 w-4 text-gold shrink-0 mt-0.5" />}
-                  </div>
-                  <div className="mt-1 text-[12px] text-cream/60 leading-snug line-clamp-2">{o.blurb}</div>
-                </button>
-              );
-            })}
-          </div>
+                  <div className="font-medium">{o.label}</div>
+                  <span className="mt-0.5 text-[12.5px] text-ink/55 leading-snug">{o.blurb}</span>
+                </SelectItem>
+              ))}
+              <SelectItem
+                value="__custom__"
+                className="relative flex w-full cursor-pointer select-none flex-col items-start rounded-sm py-2.5 pl-3 pr-9 outline-none border-t border-ink/10 mt-1 pt-3 focus:bg-burgundy/[0.08] data-[state=checked]:text-burgundy"
+              >
+                <div className="font-medium">Something else</div>
+                <span className="mt-0.5 text-[12.5px] text-ink/55 leading-snug">Tell us in your own words.</span>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          {isCustomOccasion && (
+            <div className="mt-3">
+              <Input
+                value={customOccasion}
+                onChange={(e) => {
+                  setCustomOccasion(e.target.value);
+                  setOccasion(e.target.value);
+                }}
+                placeholder="A quiet reunion, a proposal, a housewarming…"
+                className="h-12 rounded-[10px] border border-cream/20 bg-cream/[0.04] px-4 text-[15px] text-cream placeholder:text-cream/40 focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/20 shadow-none"
+                autoFocus
+              />
+            </div>
+          )}
+          {pickedOccasion && !isCustomOccasion && (
+            <div className="mt-2 text-[11.5px] text-cream/55 italic">
+              {occasions.find((o) => o.id === pickedOccasion)?.blurb}
+            </div>
+          )}
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-10 md:grid-cols-2">
           <div>
             <FieldLabel>Date</FieldLabel>
             <Popover>
@@ -510,29 +586,41 @@ function EveningStep({
                 <button
                   type="button"
                   className={cn(
-                    "flex w-full items-center gap-2.5 rounded-[10px] border border-cream/20 bg-cream/[0.05] px-3.5 h-11 text-[14px] text-cream text-left transition-colors hover:border-cream/40 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/25 cursor-pointer",
-                    !pickedDate && "text-cream/45",
+                    "flex w-full items-center gap-3 rounded-[10px] border border-cream/20 bg-cream/[0.04] px-4 h-12 text-[15px] text-cream text-left transition-colors hover:border-cream/40 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 cursor-pointer",
+                    !pickedDate && "text-cream/30",
                   )}
                 >
-                  <CalendarIcon className="h-4 w-4 shrink-0 text-cream/60" />
+                  <CalendarIcon className="h-4 w-4 shrink-0 text-cream/50" />
                   {pickedDate ? format(pickedDate, "EEE, MMM d, yyyy") : "Pick a date"}
                 </button>
               </PopoverTrigger>
               <PopoverContent
-                className="w-auto p-0 pointer-events-auto bg-white border-ink/10 text-ink [&_*]:!text-ink [&_[data-selected-single='true']]:!bg-burgundy [&_[data-selected-single='true']]:!text-cream [&_[data-selected-single='true']_*]:!text-cream [&_button:hover]:!bg-burgundy/10 [&_button:hover]:!text-burgundy [&_button:hover_*]:!text-burgundy [&_[data-selected-single='true']:hover]:!bg-burgundy [&_[data-selected-single='true']:hover]:!text-cream [&_[data-selected-single='true']:hover_*]:!text-cream"
+                className={cn(
+                  "w-auto p-0 pointer-events-auto rounded-[10px] border border-cream/15 shadow-2xl bg-burgundy-deep text-cream",
+                  "[&_*]:!text-cream",
+                  "[&_.rdp-weekday]:!text-cream/50",
+                  "[&_[data-day]:disabled]:!text-cream/25",
+                  "[&_[data-day]:hover]:!bg-cream/10",
+                  "[&_[data-day][data-today='true']]:!bg-transparent [&_[data-day][data-today='true']]:!ring-1 [&_[data-day][data-today='true']]:!ring-gold/60",
+                  "[&_[data-selected-single='true']]:!bg-gold [&_[data-selected-single='true']]:!text-burgundy-deep [&_[data-selected-single='true']_*]:!text-burgundy-deep",
+                )}
                 align="start"
               >
                 <Calendar
                   mode="single"
                   selected={pickedDate}
-                  onSelect={setPickedDate}
+                  onSelect={(d) => {
+                    setPickedDate(d);
+                    if (d) setDate(format(d, "yyyy-MM-dd"));
+                  }}
                   disabled={(d) => d < today}
-                  className={cn("p-3 pointer-events-auto bg-white text-ink rounded-lg shadow-lg border border-ink/10")}
+                  showOutsideDays={false}
+                  className={cn("p-3 pointer-events-auto")}
                 />
               </PopoverContent>
             </Popover>
             {chef && (
-              <div className="mt-1.5 text-[11px] text-cream/60">
+              <div className="mt-2 text-[11px] text-cream/55 italic">
                 {chef.name.split(" ")[0]} usually books {chef.leadTimeWeeks <= 1 ? "about a week" : `about ${chef.leadTimeWeeks} weeks`} out — earlier dates may not be available.
               </div>
             )}
@@ -542,20 +630,24 @@ function EveningStep({
             <Input
               type="time"
               value={pickedTime}
-              onChange={(e) => setPickedTime(e.target.value)}
+              onChange={(e) => {
+                setPickedTime(e.target.value);
+                setTime(e.target.value);
+              }}
               step={300}
-              className="w-full h-11 rounded-[10px] border-cream/20 bg-cream/[0.05] px-3.5 text-[14px] text-cream hover:border-cream/40 focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/25 font-mono tabular-nums [color-scheme:dark]"
+              className="w-full h-12 rounded-[10px] border border-cream/20 bg-cream/[0.04] px-4 text-[15px] text-cream hover:border-cream/40 focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/20 shadow-none font-mono tabular-nums [color-scheme:dark]"
             />
-            <div className="mt-1.5 text-[11px] text-cream/50">Any time you like — dinner usually starts 18:00–20:30.</div>
+            <div className="mt-2 text-[11px] text-cream/55 italic">Dinner usually starts 18:00–20:30.</div>
           </div>
         </div>
 
-        <div className="flex justify-end pt-2">
+        <div className="flex justify-start pt-4">
           <PrimaryButton
             disabled={!canContinue}
             onClick={() => {
               if (!pickedOccasion || !pickedDate) return;
-              onNext(pickedOccasion, format(pickedDate, "yyyy-MM-dd"), pickedTime, pickedName.trim());
+              const occ = isCustomOccasion ? customOccasion.trim() : pickedOccasion;
+              onNext(occ, format(pickedDate, "yyyy-MM-dd"), pickedTime, pickedName.trim());
             }}
           >
             Continue
@@ -618,7 +710,7 @@ function ChefMenuStep({
         }
       />
 
-      <div className="space-y-8">
+      <div className="space-y-8 md:space-y-10 lg:pl-[120px] max-w-2xl">
         {chefLocked && chef ? (
           <div className="flex items-center gap-4 rounded-[12px] border border-cream/10 bg-cream/[0.05] p-3 pr-4">
             <img src={chef.portrait} alt={chef.name} className="h-14 w-14 rounded-[10px] object-cover" />
@@ -886,6 +978,8 @@ function KitchenStep({
   setAnswers,
   photos,
   setPhotos,
+  extraEquipment,
+  setExtraEquipment,
   onNext,
   onBackToEvening,
   onBackToChef,
@@ -895,6 +989,8 @@ function KitchenStep({
   setAnswers: (a: KitchenAnswers) => void;
   photos: { file: File; url: string }[];
   setPhotos: (p: { file: File; url: string }[]) => void;
+  extraEquipment: string[];
+  setExtraEquipment: (eq: string[]) => void;
   onNext: () => void;
   onBackToEvening: () => void;
   onBackToChef: () => void;
@@ -953,83 +1049,119 @@ function KitchenStep({
         sub="A quick check so your chef knows what to expect. They confirm the evening once they've reviewed it."
       />
 
-      <div className="space-y-8">
-        {chef.equipmentRequirements && chef.equipmentRequirements.length > 0 && (
-          <section>
-            <FieldLabel>{chef.name.split(" ")[0]}'s equipment requirements</FieldLabel>
+      <div className="space-y-16 md:space-y-20 lg:pl-[120px]">
+        {chef.equipmentRequirements.length > 0 && (
+          <EditorialSection num="i" title={`what ${chef.name.split(" ")[0]} needs`} lede="The essentials this chef relies on to cook the menu as planned.">
             <div className="flex flex-wrap gap-2">
               {chef.equipmentRequirements.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center rounded-[8px] border border-burgundy/25 bg-burgundy/[0.05] px-3 py-1.5 text-[10.5px] font-mono uppercase tracking-[0.14em] text-gold"
+                  className="inline-flex items-center rounded-[8px] border border-gold/30 bg-gold/[0.06] px-3 py-1.5 text-[10.5px] font-mono uppercase tracking-[0.14em] text-gold"
                 >
                   {tag}
                 </span>
               ))}
             </div>
-          </section>
+          </EditorialSection>
         )}
 
-        <section className="grid gap-4 md:grid-cols-3">
-          {WHATS_INCLUDED.map((b) => (
-            <div key={b.title} className="rounded-[10px] border border-cream/10 bg-cream/[0.05] p-4">
-              <div className="text-[11px] font-mono uppercase tracking-[0.14em] text-gold">{b.title}</div>
-              <p className="mt-2 text-[13px] leading-[1.65] text-cream/75">{b.body}</p>
-            </div>
-          ))}
-        </section>
-
-        <section>
-          <FieldLabel>Kitchen questionnaire</FieldLabel>
-          <div className="space-y-2.5">
+        <EditorialSection num="ii" title="the kitchen, honestly" lede="Answer as best you can. A “no” never blocks the booking — your chef just needs to know.">
+          <div className="divide-y divide-cream/10 border-y border-cream/10">
             {KITCHEN_QUESTIONS.map((q) => (
-              <div key={q.key} className="rounded-[10px] border border-cream/10 bg-cream/[0.05] p-4">
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-                  <div className="text-[14px] text-cream leading-snug">{q.label}</div>
-                  <RadioGroup
-                    value={answers[q.key] ?? ""}
-                    onValueChange={(v) => setAnswers({ ...answers, [q.key]: v as "yes" | "no" })}
-                    className="flex items-center gap-2 shrink-0"
-                  >
-                    {(["yes", "no"] as const).map((v) => {
-                      const active = answers[q.key] === v;
-                      return (
-                        <label
-                          key={v}
-                          className={cn(
-                            "inline-flex items-center gap-1.5 rounded-[8px] border px-3 h-9 text-[12.5px] font-medium cursor-pointer transition-all capitalize",
-                            active
-                              ? v === "yes"
-                                ? "border-gold bg-gold/[0.08] text-gold"
-                                : "border-cream/30 bg-cream/[0.05] text-cream"
-                              : "border-cream/15 text-cream/70 hover:border-cream/40",
-                          )}
-                        >
-                          <RadioGroupItem value={v} className="sr-only" />
-                          {v}
-                        </label>
-                      );
-                    })}
-                  </RadioGroup>
-                </div>
+              <div key={q.key} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-4">
+                <div className="text-[14.5px] text-cream/90 leading-snug">{q.label}</div>
+                <RadioGroup
+                  value={answers[q.key] ?? ""}
+                  onValueChange={(v) => setAnswers({ ...answers, [q.key]: v as "yes" | "no" })}
+                  className="flex items-center gap-2 shrink-0"
+                >
+                  {(["yes", "no"] as const).map((v) => {
+                    const active = answers[q.key] === v;
+                    return (
+                      <label
+                        key={v}
+                        className={cn(
+                          "inline-flex items-center justify-center rounded-[8px] border px-3.5 h-9 min-w-[68px] text-[12px] font-mono uppercase tracking-[0.14em] cursor-pointer transition-all",
+                          active
+                            ? v === "yes"
+                              ? "border-gold bg-gold text-burgundy-deep"
+                              : "border-cream bg-cream text-burgundy-deep"
+                            : "border-cream/20 text-cream/70 hover:border-cream/45",
+                        )}
+                      >
+                        <RadioGroupItem value={v} className="sr-only" />
+                        {v}
+                      </label>
+                    );
+                  })}
+                </RadioGroup>
               </div>
             ))}
-            <div className="rounded-[10px] border border-cream/10 bg-cream/[0.05] p-4">
-              <FieldLabel>Are there any kitchen limitations the chef should know about?</FieldLabel>
-              <Textarea
-                value={answers.limitations}
-                onChange={(e) => setAnswers({ ...answers, limitations: e.target.value })}
-                placeholder="e.g. small oven, no gas, shared building elevator, no outdoor space…"
-                rows={3}
-                className="rounded-[10px] border-cream/15 bg-cream/[0.05] text-[14px] text-cream placeholder:text-cream/40"
-              />
-              <div className="mt-1.5 text-[11px] text-cream/45">Optional.</div>
-            </div>
           </div>
-        </section>
+          <div className="mt-8">
+            <FieldLabel>Any limitations to flag? (optional)</FieldLabel>
+            <Textarea
+              value={answers.limitations}
+              onChange={(e) => setAnswers({ ...answers, limitations: e.target.value })}
+              placeholder="Small oven, no gas, shared elevator, no outdoor space…"
+              rows={3}
+              className="rounded-[10px] border-cream/20 bg-cream/[0.04] text-[14px] text-cream placeholder:text-cream/40 focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/20 shadow-none"
+            />
+          </div>
+        </EditorialSection>
 
-        <section>
-          <FieldLabel>Add photos of your kitchen (optional)</FieldLabel>
+        <EditorialSection num="iii" title="anything to bring?" lede="Tick anything you'd like your chef to arrange. Each is quoted separately — no charge until you approve it in your dashboard.">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {EXTRA_EQUIPMENT_OPTIONS.map((e) => {
+              const on = extraEquipment.includes(e.id);
+              return (
+                <button
+                  key={e.id}
+                  type="button"
+                  onClick={() =>
+                    setExtraEquipment(
+                      on ? extraEquipment.filter((x) => x !== e.id) : [...extraEquipment, e.id],
+                    )
+                  }
+                  className={cn(
+                    "text-left rounded-[10px] border p-4 transition-all cursor-pointer",
+                    on
+                      ? "border-gold bg-gold/[0.06]"
+                      : "border-cream/12 bg-cream/[0.03] hover:border-cream/30",
+                  )}
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={cn(
+                        "mt-0.5 h-4 w-4 rounded border shrink-0 flex items-center justify-center",
+                        on ? "border-gold bg-gold text-burgundy-deep" : "border-cream/40",
+                      )}
+                    >
+                      {on && <Check className="h-3 w-3" strokeWidth={3} />}
+                    </div>
+                    <div className="min-w-0">
+                      <div className={cn("text-[13.5px] font-medium leading-snug", on ? "text-gold" : "text-cream")}>
+                        {e.label}
+                      </div>
+                      <div className="mt-0.5 text-[11.5px] text-cream/55 leading-snug">{e.note}</div>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {extraEquipment.length > 0 && (
+            <div className="mt-4 flex items-start gap-3 border-t border-gold/20 pt-3 text-[12px] text-cream/75 leading-relaxed">
+              <Info className="mt-0.5 h-3.5 w-3.5 text-gold shrink-0" />
+              <span>
+                <span className="text-gold font-medium">{extraEquipment.length}</span> extra
+                {extraEquipment.length === 1 ? "" : "s"} noted. Your chef will itemise these on the final quote — nothing is charged until you approve it.
+              </span>
+            </div>
+          )}
+        </EditorialSection>
+
+        <EditorialSection num="iv" title="a look at the room" lede="A few photos help your chef prepare. Optional, always helpful.">
           <input
             ref={inputRef}
             type="file"
@@ -1041,13 +1173,15 @@ function KitchenStep({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="w-full rounded-[10px] border-2 border-dashed border-cream/20 bg-cream/[0.05] px-4 py-6 flex items-center justify-center gap-2 text-[13px] text-cream/70 hover:border-cream/40 transition-colors cursor-pointer"
+            className="w-full rounded-[10px] border-2 border-dashed border-cream/20 bg-cream/[0.03] px-4 py-10 flex flex-col items-center justify-center gap-2 text-[13px] text-cream/70 hover:border-cream/40 transition-colors cursor-pointer"
           >
-            <Upload className="h-4 w-4" />
-            Drop images here or click to upload
+            <Upload className="h-4 w-4 text-gold" />
+            <span>Drop images or click to upload</span>
+            <span className="text-[11px] font-mono uppercase tracking-[0.14em] text-cream/40">JPG · PNG · WEBP · under 10MB</span>
           </button>
-          <div className="mt-1.5 text-[11px] text-cream/50">Optional — but it helps your chef prepare.</div>
-          {uploadError && <div className="mt-2 text-[12px] text-gold">{uploadError}</div>}
+          {uploadError && (
+            <div className="mt-2 text-[12px] text-gold">{uploadError}</div>
+          )}
           {photos.length > 0 && (
             <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
               {photos.slice(0, 4).map((p, i) => (
@@ -1070,13 +1204,26 @@ function KitchenStep({
               )}
             </div>
           )}
-        </section>
+        </EditorialSection>
 
-        <div className="rounded-[10px] border border-cream/10 bg-cream/[0.03] p-4 text-[12.5px] text-cream/70 leading-relaxed">
-          A "no" answer doesn't block your booking — your chef will see it and confirm whether they can still cook the menu as planned.
-        </div>
+        <EditorialSection num="v" title="what's included" lede="Every booking, regardless of chef or menu.">
+          <div className="grid gap-6 md:grid-cols-3 md:gap-8">
+            {WHATS_INCLUDED.map((b, i) => (
+              <div key={b.title} className="border-t border-cream/15 pt-4">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-gold tabular-nums">0{i + 1}</span>
+                  <div className="text-[11px] font-mono uppercase tracking-[0.14em] text-cream/80">{b.title}</div>
+                </div>
+                <p className="mt-2.5 text-[13px] leading-[1.7] text-cream/65">{b.body}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 border-l-2 border-gold/40 pl-4 text-[12.5px] text-cream/75 leading-relaxed">
+            Extra setup (rented dinnerware, a portable burner, a grill…) is quoted separately by your chef, reviewed in your dashboard, and paid at confirmation — never upfront.
+          </div>
+        </EditorialSection>
 
-        <div className="flex justify-end pt-2">
+        <div className="flex justify-start pt-4">
           <PrimaryButton disabled={!yesNoAnswered} onClick={onNext}>
             Continue to contact & pay
           </PrimaryButton>
@@ -1184,7 +1331,7 @@ function PaymentStep({
         }
       />
 
-      <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="space-y-8 md:space-y-10 lg:pl-[120px] max-w-xl">
         <form onSubmit={handleSubmit} className="space-y-6 min-w-0">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -1282,7 +1429,7 @@ function PaymentStep({
             </div>
           )}
 
-          <div className="rounded-[10px] border border-gold/25 bg-gold/[0.06] p-4 text-[13px] text-cream/85 leading-relaxed">
+          <div className="border-l-2 border-gold/40 pl-4 text-[12.5px] text-cream/80 leading-relaxed">
             {CONFIRMATION_GATING_STATEMENT}
           </div>
 
@@ -1302,38 +1449,15 @@ function PaymentStep({
                 ? "Send request to chef"
                 : method === "later"
                   ? "Send request to chef"
-                  : `Pay $${deposit} deposit · Request the night`}
+                  : `Pay $${deposit} deposit`}
           </button>
         </form>
 
-        <aside className="md:sticky md:top-24 self-start rounded-xl border border-cream/10 bg-cream/[0.03] p-5 text-cream">
-          <div className="flex items-center gap-3">
-            <img src={chef!.portrait} alt={chef!.name} className="h-11 w-11 rounded-full object-cover" />
-            <div className="min-w-0">
-              <div className="text-[14px] font-medium text-cream truncate">{chef!.name}</div>
-              <div className="text-[11.5px] text-cream/55 truncate">
-                {chef!.cuisine} · {chef!.city}
-              </div>
-            </div>
-          </div>
-          <div className="my-4 h-px bg-cream/10" />
-          <dl className="space-y-2.5 text-[13px]">
-            <SummaryRow k="Occasion" v={occasionLabel} />
-            <SummaryRow k="Menu" v={isCustom ? "Custom menu" : pkg!.name} />
-            <SummaryRow k="Date" v={dateLabel} />
-            <SummaryRow k="Arrival" v={time!} />
-          </dl>
-          <div className="mt-4 h-px bg-cream/10" />
-          <div className="mt-4 flex items-baseline justify-between">
-            <div className="text-[12px] text-cream/60">Total</div>
-            <div className="text-[18px] font-semibold text-cream tabular-nums">{totalDisplay}</div>
-          </div>
-          {isCustom && <div className="mt-1 text-[11.5px] text-cream/55">Final price confirmed by your chef</div>}
-          <div className="mt-1 flex items-baseline justify-between">
-            <div className="text-[11.5px] text-cream/55">Due today</div>
-            <div className="text-[13px] font-medium text-gold tabular-nums">{dueTodayDisplay}</div>
-          </div>
-        </aside>
+        {/* mobile-only compact total (MenuPreview handles it on desktop) */}
+        <div className="md:hidden mt-8 border-t border-cream/10 pt-5 flex items-baseline justify-between">
+          <div className="text-[11.5px] font-mono uppercase tracking-[0.18em] text-cream/55">Due today</div>
+          <div className="text-[16px] font-semibold text-gold tabular-nums">{dueTodayDisplay}</div>
+        </div>
       </div>
     </Reveal>
   );
@@ -1385,14 +1509,14 @@ function MenuPreview({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
-      className="relative w-full text-ink rounded-[18px] overflow-hidden shadow-2xl"
+      className="relative w-full text-ink"
       style={{
         background:
           "radial-gradient(140% 90% at 50% 0%, rgba(201,169,97,0.14) 0%, transparent 55%), linear-gradient(180deg, #F4EFE7 0%, #EFE8DC 100%)",
       }}
     >
-      <div className="pointer-events-none absolute inset-3 border border-ink/15 rounded-[12px]" />
-      <div className="pointer-events-none absolute inset-[14px] border border-ink/5 rounded-[10px]" />
+      <div className="pointer-events-none absolute inset-3 border border-ink/15" />
+      <div className="pointer-events-none absolute inset-[14px] border border-ink/5" />
 
       <div className="relative px-7 pt-8 pb-7">
         <div className="flex items-center justify-between text-[9px] font-mono uppercase tracking-[0.28em] text-ink/50">
@@ -1410,14 +1534,14 @@ function MenuPreview({
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
               className={cn(
-                "mt-3 font-display font-bold lowercase tracking-[-0.02em] leading-[1] text-[26px] break-words",
-                nameLine ? "text-ink" : "text-ink/25 italic",
+                "mt-3 font-serif italic tracking-[-0.005em] leading-[1.05] text-[34px] break-words",
+                nameLine ? "text-ink" : "text-ink/25",
               )}
             >
               {nameLine || "your name"}
             </motion.div>
           </AnimatePresence>
-          <div className={cn("mt-3 text-[10.5px] font-mono uppercase tracking-[0.22em]", occasionLabel ? "text-burgundy" : "text-ink/30")}>
+          <div className={cn("mt-3 font-serif italic text-[15px]", occasionLabel ? "text-burgundy" : "text-ink/35")}>
             for {occasionLabel ?? "an evening"}
           </div>
         </div>
@@ -1439,11 +1563,11 @@ function MenuPreview({
               transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
               className="mt-2"
             >
-              <div className={cn("font-display font-bold lowercase text-[18px] tracking-[-0.01em] leading-tight", pkg || isCustom ? "text-ink" : "text-ink/30")}>
+              <div className={cn("font-serif italic text-[22px] leading-tight", pkg || isCustom ? "text-ink" : "text-ink/30")}>
                 {isCustom ? "a menu, designed for you" : pkg?.name ?? "to be chosen"}
               </div>
               {pkg?.description && (
-                <p className="mt-2 text-[11.5px] leading-[1.55] text-ink/65 max-w-[28ch] mx-auto">
+                <p className="mt-2 font-serif text-[13.5px] leading-[1.55] text-ink/70 max-w-[32ch] mx-auto">
                   {pkg.description}
                 </p>
               )}
@@ -1502,7 +1626,7 @@ function MenuPreview({
           )}
           <div className="min-w-0 flex-1">
             <div className="text-[8.5px] font-mono uppercase tracking-[0.22em] text-ink/45">Prepared by</div>
-            <div className={cn("text-[11.5px] font-medium truncate", chef ? "text-ink" : "text-ink/30")}>
+            <div className={cn("font-serif italic text-[15px] truncate", chef ? "text-ink" : "text-ink/30")}>
               {chef ? chef.name : "a chef, to be chosen"}
             </div>
           </div>
@@ -1532,51 +1656,66 @@ function SuccessScreen({
   dateLabel?: string;
   time?: string;
   chef: Chef;
-  pkg?: { name: string; price: number; courses: number };
+  pkg?: Chef["packages"][number];
   isCustom?: boolean;
 }) {
   return (
     <Reveal>
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.28em] text-cream/45">
           <span>Love at First Sight</span>
           <span className="tabular-nums">{bookingId}</span>
         </div>
 
-        <div className="mt-14 text-center">
+        <div className="mt-10 md:mt-14 text-center">
           <div className="text-[10px] font-mono uppercase tracking-[0.32em] text-gold">the request is in</div>
-          <h1 className="mt-6 font-display font-bold lowercase text-[56px] md:text-[88px] leading-[0.95] tracking-[-0.03em] text-cream">
+          <h1 className="mt-5 md:mt-6 font-display font-bold lowercase text-[44px] sm:text-[56px] md:text-[72px] lg:text-[88px] leading-[0.95] tracking-[-0.03em] text-cream">
             a table,<br />held for you.
           </h1>
-          <p className="mx-auto mt-8 max-w-md text-[14px] leading-[1.75] text-cream/70">
+          <p className="mx-auto mt-6 md:mt-8 max-w-md text-[14px] leading-[1.75] text-cream/70">
             {chef.name.split(" ")[0]} has 24 hours to review the kitchen and confirm.
             Every detail lives in your dashboard from here.
           </p>
         </div>
 
-        <div className="my-14 flex items-center gap-4">
+        <div className="my-10 md:my-14 flex items-center gap-4">
           <div className="h-px flex-1 bg-cream/15" />
           <span className="text-gold text-[16px] leading-none">✦</span>
           <div className="h-px flex-1 bg-cream/15" />
         </div>
 
-        <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start">
-          <div className="md:text-right space-y-6">
-            <MetaBlock k="For" v={guestName || "you"} />
-            <MetaBlock k="Occasion" v={occasionLabel} />
-            <MetaBlock k="Date" v={dateLabel || "—"} />
-            <MetaBlock k="Arrival" v={time || "—"} mono />
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-16 items-start">
+          <div className="space-y-8 order-2 lg:order-1">
+            <div className="grid gap-8 sm:grid-cols-2">
+              <div className="space-y-6">
+                <MetaBlock k="For" v={guestName || "you"} />
+                <MetaBlock k="Occasion" v={occasionLabel} />
+                <MetaBlock k="Date" v={dateLabel || "—"} />
+                <MetaBlock k="Arrival" v={time || "—"} mono />
+              </div>
+              <div className="space-y-6">
+                <MetaBlock k="The menu" v={isCustom ? "a menu designed for you" : pkg ? pkg.name : "Selected menu"} />
+                {!isCustom && pkg && <MetaBlock k="Courses" v={String(pkg.courses)} />}
+                <MetaBlock k="Prepared by" v={`${chef.name} · ${chef.city}`} />
+                <MetaBlock k="Total" v={isCustom ? "quoted in dashboard" : pkg ? `$${pkg.price}` : "$220"} accent />
+              </div>
+            </div>
           </div>
-          <div className="hidden md:block w-px self-stretch bg-cream/15 min-h-[220px]" />
-          <div className="space-y-6">
-            <MetaBlock k="The menu" v={isCustom ? "a menu designed for you" : pkg ? pkg.name : "Selected menu"} />
-            {!isCustom && pkg && <MetaBlock k="Courses" v={String(pkg.courses)} />}
-            <MetaBlock k="Prepared by" v={`${chef.name} · ${chef.city}`} />
-            <MetaBlock k="Total" v={isCustom ? "quoted in dashboard" : pkg ? `$${pkg.price}` : "$220"} accent />
+          <div className="order-1 lg:order-2">
+            <MenuPreview
+              stepIdx={4}
+              guestName={guestName}
+              occasionLabel={occasionLabel}
+              date={dateLabel}
+              time={time}
+              chef={chef}
+              pkg={pkg}
+              isCustom={!!isCustom}
+            />
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col-reverse sm:flex-row sm:justify-start gap-3">
+        <div className="mt-12 md:mt-16 flex flex-col-reverse sm:flex-row sm:justify-start gap-3">
           <Link
             href="/chefs"
             className="inline-flex h-11 items-center justify-center border border-cream/25 px-5 text-[11px] font-mono uppercase tracking-[0.22em] text-cream/80 hover:text-cream hover:border-cream/60 transition-colors rounded-[10px]"

@@ -119,20 +119,37 @@ lafs-next/
 
 ---
 
-## 5. Latest Commit Synchronization (Commit `7b7ec4f`)
+## 5. Latest Commit Synchronization (Commits `7b7ec4f` to `d5ee5a7`)
 
-1. **Typography & Styling**:
-   - Added **Cormorant Garamond** font stylesheet and `--font-serif` CSS variable.
-   - Added `@utility font-serif` utility rule in `app/globals.css`.
+1. **Navbar Breakpoint Update (`components/layout/Navbar.tsx`)**:
+   - Changed desktop continuous nav pill display threshold from `hidden md:flex` to `hidden lg:flex`.
+   - Updated mobile logo link and hamburger menu button threshold to `lg:hidden`.
 
-2. **FAQ Page Update**:
-   - Added new FAQ question & answer regarding kitchen equipment quotes (`"what if my kitchen needs extra equipment?"`).
+2. **Root Layout Pointer Setup (`app/layout.tsx`)**:
+   - Removed `<CustomCursor />` component from root layout to ensure native cursor and hover behaviors across all cards and interactive controls.
 
-3. **Chef Application Modal Redesign**:
-   - Redesigned `ApplicationDialog` in `app/for-chefs/page.client.tsx` to match the dark burgundy deep modal theme canvas (`bg-burgundy-deep text-cream border-cream/10`).
-   - Updated form controls (`bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40`), active toggles (`border-gold bg-gold text-burgundy-deep`), upload dropzones (`border-cream/25 bg-cream/[0.04] text-cream/70`), and checkbox cards to dark transparent cream styling.
+3. **Booking Wizard Design & Flow Alignment (`app/book/page.client.tsx`)**:
+   - **`StepTitle` & Container Grid**: Updated step title styling to use a 2-column grid (`lg:grid-cols-[80px_minmax(0,1fr)]`), converting "Step X of Y" to `"N°0X / 0Y"` with a gold underline flourish and 54px bold lowercase display title. Added `lg:pl-[120px]` inner padding to form containers across all 4 steps.
+   - **Step 1 (`EveningStep`)**: Replaced button grid with a luxury `<Select>` dropdown for occasions (`What are we celebrating?`), dark transparent inputs (`bg-cream/[0.04] border-cream/20`), italic hint copy (*`Watch the invitation fill in as you type.`*, *`Dinner usually starts 18:00–20:30.`*), and custom occasion input toggle.
+   - **Step 3 (`KitchenStep`)**: Fully aligned with React design using `EditorialSection` components:
+     - Section `i`: `what [chef] needs` (Chef's equipment requirements pills).
+     - Section `ii`: `the kitchen, honestly` (Divided questionnaire with uppercase font-mono `YES`/`NO` gold buttons and limitations text area).
+     - Section `iii`: `anything to bring?` (`EXTRA_EQUIPMENT_OPTIONS` grid with dinnerware, induction, grill, linens, stemware, etc.).
+     - Section `iv`: `a look at the room` (Image upload dropzone).
+     - Section `v`: `what's included` (`WHATS_INCLUDED` 3-column list with `01`, `02`, `03` numbers).
+   - **Paper Invitation Card (`MenuPreview`)**: Removed all border-radius rounded corners to restore the crisp, sharp physical paper card rectangle (`relative w-full text-ink` with inset line borders). Updated all paper typography to match React design (`font-serif italic text-[34px]` for guest name, `font-serif italic text-[15px]` for occasion, `font-serif italic text-[22px]` for menu title, `font-serif text-[13.5px]` for description, `font-serif italic text-[15px]` for chef name).
+   - **Payment Step (`PaymentStep`)**: Single-column layout (`max-w-xl`), removed redundant right-side summary box, added mobile-only due today summary row (`md:hidden`), and updated gating statement styling (`border-l-2 border-gold/40 pl-4`).
+   - **Success Screen / Confirmation**: Updated title responsiveness (`text-[44px] sm:text-[56px] md:text-[72px] lg:text-[88px]`), expanded container width (`max-w-5xl`), and transformed layout into a 2-column grid (`grid gap-12 lg:grid-cols-[minmax(0,1fr)_380px]`) containing guest metadata on the left and the physical `MenuPreview` card (`stepIdx={4}`) on the right.
 
-4. **Booking Flow Post-Payment Screen**:
-   - Replaced post-payment `SuccessDialog` modal popover with full-page `SuccessScreen` rendered directly on the dark burgundy page canvas (`text-cream`).
-   - Displays booking request ID header (`Love at First Sight | #booking-id`), title (`a table, held for you.`), chef confirmation note, gold star divider, 2-column metadata breakdown (`MetaBlock` for guest name, occasion, date, arrival, menu, courses, chef, total price), and navigation buttons (`back to chefs`, `open dashboard →`).
+4. **Chef Application Modal Simplification (`app/for-chefs/page.client.tsx`)**:
+   - **Step 2 (Your Cooking)**: Replaced multi-field dish creator and sample package form box with a simple signature dishes textarea (one per line, up to 5) and converted custom menu option to a Select dropdown (`Yes, on request` / `No, set menus only`).
+   - **Step 3 (Credentials & Kitchen)**: Streamlined Step 3 into a clean 2-column form (profile photo, food safety cert dropdown, liability insurance dropdown, typical lead time dropdown, available days buttons, custom gold checkboxes, and informational notice).
+
+5. **Our Story Page Refinements (`app/our-story/page.tsx`)**:
+   - **Founders Photo**: Updated to use `/Love_at_First_Sight_Founders_Photo.png` from the `public` directory with height expanded to `h-[600px] sm:h-[720px] md:h-[820px]`.
+   - **Top Alignment**: Set section grid alignment to `items-start` so the left column text is aligned cleanly at the top.
+
+
+
+
 
