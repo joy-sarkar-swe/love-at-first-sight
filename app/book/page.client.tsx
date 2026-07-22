@@ -218,46 +218,59 @@ function BookingFlow() {
       </header>
 
       <main className="mx-auto max-w-6xl px-5 md:px-10 py-14 md:py-20">
-        {/* Mobile: collapsible menu preview */}
-        <div className="md:hidden mb-6">
-          <button
-            type="button"
-            onClick={() => setPreviewOpenMobile((v) => !v)}
-            className="w-full flex items-center justify-between rounded-[12px] border border-cream/15 bg-cream/[0.04] backdrop-blur-sm px-4 h-12 text-[12px] font-mono uppercase tracking-[0.14em] text-cream/85"
-          >
-            <span className="inline-flex items-center gap-2">
-              <Sparkles className="h-3.5 w-3.5 text-gold" />
-              {previewOpenMobile ? "Hide menu" : "Preview the menu"}
-            </span>
-            <span className="text-cream/50">{previewOpenMobile ? "–" : "+"}</span>
-          </button>
-          <AnimatePresence initial={false}>
-            {previewOpenMobile && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-                className="overflow-hidden"
+        {success ? (
+          <SuccessScreen
+            bookingId="LAFS-8492"
+            guestName={draftGuestName}
+            occasionLabel={occasionLabel}
+            dateLabel={date ? date : undefined}
+            time={time}
+            chef={selectedChef || previewChef || chefs[0]}
+            pkg={selectedPackage || previewPackage}
+            isCustom={isCustom || isPreviewCustom}
+          />
+        ) : (
+          <>
+            {/* Mobile: collapsible menu preview */}
+            <div className="md:hidden mb-6">
+              <button
+                type="button"
+                onClick={() => setPreviewOpenMobile((v) => !v)}
+                className="w-full flex items-center justify-between rounded-[12px] border border-cream/15 bg-cream/[0.04] backdrop-blur-sm px-4 h-12 text-[12px] font-mono uppercase tracking-[0.14em] text-cream/85"
               >
-                <div className="pt-4">
-                  <MenuPreview
-                    stepIdx={stepIdx}
-                    guestName={draftGuestName}
-                    occasionLabel={draftOccasion ? previewOccasionLabel : undefined}
-                    date={draftDate}
-                    time={draftTime}
-                    chef={previewChef}
-                    pkg={previewPackage}
-                    isCustom={isPreviewCustom}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                <span className="inline-flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5 text-gold" />
+                  {previewOpenMobile ? "Hide menu" : "Preview the menu"}
+                </span>
+                <span className="text-cream/50">{previewOpenMobile ? "–" : "+"}</span>
+              </button>
+              <AnimatePresence initial={false}>
+                {previewOpenMobile && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-4">
+                      <MenuPreview
+                        stepIdx={stepIdx}
+                        guestName={draftGuestName}
+                        occasionLabel={draftOccasion ? previewOccasionLabel : undefined}
+                        date={draftDate}
+                        time={draftTime}
+                        chef={previewChef}
+                        pkg={previewPackage}
+                        isCustom={isPreviewCustom}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-        <div className="grid gap-12 md:gap-16 md:grid-cols-[minmax(0,1fr)_380px]">
+            <div className="grid gap-12 md:gap-16 md:grid-cols-[minmax(0,1fr)_380px]">
           {/* Form column — dark burgundy matching React code */}
           <div className="min-w-0">
             <div key={step} className="animate-[fadein_260ms_ease-out]">
@@ -349,18 +362,9 @@ function BookingFlow() {
             </p>
           </aside>
         </div>
+        </>
+        )}
       </main>
-
-      <SuccessDialog
-        open={success}
-        onOpenChange={setSuccess}
-        chef={selectedChef}
-        pkg={selectedPackage}
-        isCustom={isCustom}
-        occasionLabel={occasionLabel}
-        date={date}
-        time={time}
-      />
     </div>
   );
 }
@@ -1512,147 +1516,102 @@ function MenuPreview({
   );
 }
 
-function SuccessDialog({
-  open,
-  onOpenChange,
+function SuccessScreen({
+  bookingId,
+  guestName,
+  occasionLabel,
+  dateLabel,
+  time,
   chef,
   pkg,
   isCustom,
-  occasionLabel,
-  date,
-  time,
 }: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  chef: Chef | undefined;
-  pkg: { name: string; price: number; courses: number } | undefined;
-  isCustom: boolean;
+  bookingId: string;
+  guestName?: string;
   occasionLabel: string;
-  date?: string;
+  dateLabel?: string;
   time?: string;
+  chef: Chef;
+  pkg?: { name: string; price: number; courses: number };
+  isCustom?: boolean;
 }) {
-  if (!chef || (!pkg && !isCustom)) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent />
-      </Dialog>
-    );
-  }
-  const dateLabel = date
-    ? new Date(date + "T00:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" })
-    : "";
-  const bookingId = date ? `LAFS-${chef.slug.slice(0, 3).toUpperCase()}-${date.replace(/-/g, "").slice(2)}` : "LAFS-000000";
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent hideClose className="border-0 p-0 bg-transparent max-w-lg max-h-[92vh] overflow-y-auto shadow-none">
-        <div
-          className="relative text-ink rounded-[20px] overflow-hidden"
-          style={{
-            background:
-              "radial-gradient(140% 90% at 50% 0%, rgba(201,169,97,0.16) 0%, transparent 55%), linear-gradient(180deg, #F4EFE7 0%, #EFE8DC 100%)",
-          }}
-        >
-          {/* Close button aligned cleanly inside the card frame */}
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            className="absolute right-5 top-5 z-20 inline-flex h-8 w-8 items-center justify-center rounded-full border border-ink/20 bg-ink/5 text-ink/70 hover:bg-ink/15 hover:text-ink transition-colors cursor-pointer"
-            aria-label="Close"
-          >
-            <XIcon className="h-4 w-4" />
-          </button>
+    <Reveal>
+      <div className="mx-auto max-w-3xl">
+        <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.28em] text-cream/45">
+          <span>Love at First Sight</span>
+          <span className="tabular-nums">{bookingId}</span>
+        </div>
 
-          <div className="pointer-events-none absolute inset-4 border border-ink/15 rounded-[14px]" />
-          <div className="pointer-events-none absolute inset-[18px] border border-ink/5 rounded-[12px]" />
+        <div className="mt-14 text-center">
+          <div className="text-[10px] font-mono uppercase tracking-[0.32em] text-gold">the request is in</div>
+          <h1 className="mt-6 font-display font-bold lowercase text-[56px] md:text-[88px] leading-[0.95] tracking-[-0.03em] text-cream">
+            a table,<br />held for you.
+          </h1>
+          <p className="mx-auto mt-8 max-w-md text-[14px] leading-[1.75] text-cream/70">
+            {chef.name.split(" ")[0]} has 24 hours to review the kitchen and confirm.
+            Every detail lives in your dashboard from here.
+          </p>
+        </div>
 
-          <div className="relative px-8 pt-10 pb-9">
-            <div className="flex items-center justify-between text-[9px] font-mono uppercase tracking-[0.28em] text-ink/50">
-              <span>Love at First Sight</span>
-              <span className="tabular-nums">{bookingId}</span>
-            </div>
+        <div className="my-14 flex items-center gap-4">
+          <div className="h-px flex-1 bg-cream/15" />
+          <span className="text-gold text-[16px] leading-none">✦</span>
+          <div className="h-px flex-1 bg-cream/15" />
+        </div>
 
-            <DialogHeader className="mt-8 text-center space-y-3">
-              <div className="text-[9px] font-mono uppercase tracking-[0.32em] text-ink/45">the request is in</div>
-              <DialogTitle className="font-display font-bold text-[34px] leading-[1] lowercase tracking-[-0.03em] text-ink text-center">
-                a table, held for you.
-              </DialogTitle>
-              <DialogDescription className="text-ink/65 text-[13px] leading-relaxed pt-1 max-w-sm mx-auto text-center">
-                Your chef has 24 hours to review the kitchen and confirm. Every detail lives in your dashboard from here.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="my-8 flex items-center gap-3">
-              <div className="h-px flex-1 bg-ink/20" />
-              <span className="text-gold text-[14px] leading-none">✦</span>
-              <div className="h-px flex-1 bg-ink/20" />
-            </div>
-
-            <div className="text-center">
-              <div className="text-[9px] font-mono uppercase tracking-[0.32em] text-ink/45">the menu</div>
-              <div className="mt-2 font-display font-bold lowercase text-[20px] tracking-[-0.02em] text-ink">
-                {isCustom ? "a menu, designed for you" : pkg!.name}
-              </div>
-              <div className="mt-1 text-[10.5px] font-mono uppercase tracking-[0.22em] text-burgundy">
-                for {occasionLabel}
-              </div>
-            </div>
-
-            <dl className="mt-7 grid grid-cols-3 gap-3 text-center">
-              <div>
-                <div className="text-[8.5px] font-mono uppercase tracking-[0.22em] text-ink/45">Date</div>
-                <div className="mt-1 text-[11px] font-mono text-ink">{dateLabel || "—"}</div>
-              </div>
-              <div>
-                <div className="text-[8.5px] font-mono uppercase tracking-[0.22em] text-ink/45">Arrival</div>
-                <div className="mt-1 text-[11px] font-mono tabular-nums text-ink">{time || "—"}</div>
-              </div>
-              <div>
-                <div className="text-[8.5px] font-mono uppercase tracking-[0.22em] text-ink/45">Total</div>
-                <div className="mt-1 font-display font-bold text-[15px] tabular-nums text-burgundy">
-                  {isCustom ? "TBD" : `$${pkg!.price}`}
-                </div>
-              </div>
-            </dl>
-
-            <div className="mt-7 flex items-center gap-3 border-t border-ink/15 pt-5">
-              <img src={chef.portrait} alt={chef.name} className="h-11 w-11 rounded-full object-cover border border-ink/10" />
-              <div className="min-w-0 flex-1">
-                <div className="text-[8.5px] font-mono uppercase tracking-[0.22em] text-ink/45">Prepared by</div>
-                <div className="text-[13px] font-medium text-ink truncate">{chef.name}</div>
-                <div className="text-[10.5px] font-mono uppercase tracking-[0.18em] text-ink/50 truncate">
-                  {chef.cuisine} · {chef.city}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="font-display font-bold text-gold text-[22px] leading-none">L</div>
-                <div className="text-[7.5px] font-mono uppercase tracking-[0.28em] text-ink/40 mt-1">sealed</div>
-              </div>
-            </div>
-
-            <div className="mt-8 flex flex-col-reverse sm:flex-row sm:justify-center gap-3">
-              <Link
-                href="/chefs"
-                onClick={() => onOpenChange(false)}
-                className="inline-flex h-11 items-center justify-center border border-ink/30 px-5 text-[11px] font-mono uppercase tracking-[0.22em] text-ink/80 hover:text-ink hover:border-ink transition-colors rounded-[10px]"
-              >
-                back to chefs
-              </Link>
-              <Link
-                href="/dashboard"
-                onClick={() => onOpenChange(false)}
-                className="inline-flex h-11 items-center justify-center bg-burgundy-deep px-6 text-[11px] font-mono uppercase tracking-[0.22em] text-cream hover:bg-burgundy transition-colors rounded-[10px]"
-              >
-                open dashboard →
-              </Link>
-            </div>
-
-            <p className="mt-6 text-[9.5px] font-mono uppercase tracking-[0.28em] text-ink/35 text-center">
-              prototype — no real payment is processed
-            </p>
+        <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start">
+          <div className="md:text-right space-y-6">
+            <MetaBlock k="For" v={guestName || "you"} />
+            <MetaBlock k="Occasion" v={occasionLabel} />
+            <MetaBlock k="Date" v={dateLabel || "—"} />
+            <MetaBlock k="Arrival" v={time || "—"} mono />
+          </div>
+          <div className="hidden md:block w-px self-stretch bg-cream/15 min-h-[220px]" />
+          <div className="space-y-6">
+            <MetaBlock k="The menu" v={isCustom ? "a menu designed for you" : pkg ? pkg.name : "Selected menu"} />
+            {!isCustom && pkg && <MetaBlock k="Courses" v={String(pkg.courses)} />}
+            <MetaBlock k="Prepared by" v={`${chef.name} · ${chef.city}`} />
+            <MetaBlock k="Total" v={isCustom ? "quoted in dashboard" : pkg ? `$${pkg.price}` : "$220"} accent />
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+
+        <div className="mt-16 flex flex-col-reverse sm:flex-row sm:justify-start gap-3">
+          <Link
+            href="/chefs"
+            className="inline-flex h-11 items-center justify-center border border-cream/25 px-5 text-[11px] font-mono uppercase tracking-[0.22em] text-cream/80 hover:text-cream hover:border-cream/60 transition-colors rounded-[10px]"
+          >
+            back to chefs
+          </Link>
+          <Link
+            href="/dashboard"
+            className="inline-flex h-11 items-center justify-center bg-cream text-burgundy-deep px-6 text-[11px] font-mono uppercase tracking-[0.22em] hover:bg-cream/90 transition-colors rounded-[10px]"
+          >
+            open dashboard →
+          </Link>
+        </div>
+
+        <p className="mt-10 text-[10px] font-mono uppercase tracking-[0.28em] text-cream/35">
+          prototype — no real payment is processed
+        </p>
+      </div>
+    </Reveal>
+  );
+}
+
+function MetaBlock({ k, v, mono, accent }: { k: string; v: string; mono?: boolean; accent?: boolean }) {
+  return (
+    <div>
+      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-cream/45">{k}</div>
+      <div
+        className={cn(
+          "mt-1.5 text-[15px] leading-snug",
+          mono && "font-mono tabular-nums",
+          accent ? "font-display font-bold text-[22px] text-gold" : "text-cream",
+        )}
+      >
+        {v}
+      </div>
+    </div>
   );
 }

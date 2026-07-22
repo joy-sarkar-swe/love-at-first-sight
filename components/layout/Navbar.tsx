@@ -71,9 +71,8 @@ export function Navbar() {
         initial={{ y: -12, opacity: 0, filter: "blur(8px)" }}
         animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
         transition={{ duration: 0.9, ease: [0.23, 1, 0.32, 1], delay: 0.15 }}
-        className={`pointer-events-auto relative z-[60] flex items-center justify-between transition-all duration-300 ${
-          scrolled ? "bg-brand/90 backdrop-blur-md border-b border-cream/10" : ""
-        }`}
+        className={`pointer-events-auto relative z-[60] flex items-center justify-between transition-all duration-300 ${scrolled ? "bg-brand/90 backdrop-blur-md border-b border-cream/10" : ""
+          }`}
         style={{
           paddingLeft: "clamp(1rem, 5vw, 3rem)",
           paddingRight: "clamp(1rem, 5vw, 3rem)",
@@ -92,9 +91,8 @@ export function Navbar() {
               <Link
                 key={l.to}
                 href={l.to}
-                className={`relative inline-flex h-9 items-center rounded-full px-4 text-[13px] font-medium tracking-tight transition-colors duration-200 ${
-                  active ? "bg-cream text-burgundy" : "text-cream/75 hover:text-cream"
-                }`}
+                className={`relative inline-flex h-9 items-center rounded-full px-4 text-[13px] font-medium tracking-tight transition-colors duration-200 ${active ? "bg-cream text-burgundy" : "text-cream/75 hover:text-cream"
+                  }`}
               >
                 {l.label}
               </Link>
@@ -125,9 +123,8 @@ export function Navbar() {
               <Link
                 key={l.to}
                 href={l.to}
-                className={`relative inline-flex h-9 items-center rounded-full px-4 text-[13px] font-medium tracking-tight transition-colors duration-200 ${
-                  active ? "bg-cream text-burgundy" : "text-cream/75 hover:text-cream"
-                }`}
+                className={`relative inline-flex h-9 items-center rounded-full px-4 text-[13px] font-medium tracking-tight transition-colors duration-200 ${active ? "bg-cream text-burgundy" : "text-cream/75 hover:text-cream"
+                  }`}
               >
                 {l.label}
               </Link>
@@ -148,7 +145,7 @@ export function Navbar() {
           aria-label="Love at First Sight — home"
           onClick={() => setOpen(false)}
           className="md:hidden inline-flex items-center justify-center rounded-full bg-cream ring-4 ring-burgundy/30 overflow-hidden shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)] transition-transform duration-300 active:scale-[0.97] shrink-0"
-          style={{ height: scrolled ? 72 : 88, width: scrolled ? 72 : 88 }}
+          style={{ height: scrolled ? 79 : 96, width: scrolled ? 79 : 96 }}
         >
           <img src="/logo.webp" alt="" className="h-full w-full object-cover select-none" draggable={false} />
         </Link>
@@ -168,9 +165,8 @@ export function Navbar() {
       {/* Mobile full-screen menu overlay */}
       <div
         aria-hidden={!open}
-        className={`pointer-events-auto fixed inset-0 z-40 bg-burgundy-deep transition-opacity duration-300 ease-out ${
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`pointer-events-auto fixed inset-0 z-40 bg-burgundy-deep transition-opacity duration-300 ease-out ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
       >
         <div className="container-page flex h-full flex-col justify-between pt-[150px] pb-16 overflow-y-auto">
           <nav>
@@ -211,9 +207,8 @@ export function Navbar() {
                 style={{
                   opacity: open ? 1 : 0,
                   transform: open ? "translateY(0)" : "translateY(8px)",
-                  transition: `opacity 400ms ease-out ${links.length * 60}ms, transform 400ms ease-out ${
-                    links.length * 60
-                  }ms`,
+                  transition: `opacity 400ms ease-out ${links.length * 60}ms, transform 400ms ease-out ${links.length * 60
+                    }ms`,
                 }}
               >
                 <Link

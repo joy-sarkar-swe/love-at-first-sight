@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { Check, CheckCircle2 } from "lucide-react";
 import {
   CinematicHero,
   Reveal,
@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const IMG = (id: string, w = 1800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
@@ -473,28 +474,28 @@ function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: b
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-cream text-ink border-blush/50 max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-burgundy-deep text-cream border-cream/10 max-w-2xl max-h-[92vh] overflow-y-auto p-8 md:p-10">
         {!submitted ? (
           <>
             <DialogHeader>
               <div className="flex items-center justify-between pr-8">
-                <div className="label text-ink/50">Chef application</div>
-                <div className="label text-ink/50">Step {step} of 3</div>
+                <div className="label text-cream/50">Chef application</div>
+                <div className="label text-cream/50">N°0{step} / 03</div>
               </div>
-              <DialogTitle className="mt-3 font-display font-bold text-3xl lowercase tracking-[-0.02em] text-ink">
+              <DialogTitle className="mt-4 font-display font-bold text-3xl md:text-4xl lowercase tracking-[-0.02em] text-cream">
                 {step === 1 ? "About you" : step === 2 ? "Your cooking" : "Credentials & kitchen"}
               </DialogTitle>
-              <DialogDescription className="text-ink/70 leading-relaxed">
+              <DialogDescription className="text-cream/65 leading-relaxed">
                 We read every application by hand. Expect to hear back inside 48 hours.
               </DialogDescription>
-              <div className="mt-4 hidden md:flex gap-1.5">
+              <div className="mt-6 hidden md:flex gap-1.5">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className={`h-[3px] flex-1 rounded-full ${n <= step ? "bg-burgundy" : "bg-ink/15"}`} />
+                  <div key={n} className={`h-[2px] flex-1 ${n <= step ? "bg-gold" : "bg-cream/15"}`} />
                 ))}
               </div>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               {step === 1 && (
                 <Step1 f={f} set={set} showErrors={showErrors} />
               )}
@@ -505,23 +506,23 @@ function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: b
                 <Step3 f={f} set={set} showErrors={showErrors} />
               )}
 
-              <DialogFooter className="mt-6 gap-3 sm:justify-between">
+              <DialogFooter className="mt-8 gap-3 sm:justify-between pt-6 border-t border-cream/10">
                 <div className="flex gap-3">
-                  <button type="button" onClick={() => handleOpenChange(false)} className="inline-flex h-11 items-center rounded-[12px] border border-ink/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-ink/70 hover:border-ink/60 transition-colors">
+                  <button type="button" onClick={() => handleOpenChange(false)} className="inline-flex h-11 items-center rounded-[12px] border border-cream/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-cream/70 hover:border-cream/60 transition-colors">
                     Cancel
                   </button>
                   {step > 1 && (
-                    <button type="button" onClick={handleBack} className="inline-flex h-11 items-center rounded-[12px] border border-ink/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-ink hover:border-ink/60 transition-colors">
+                    <button type="button" onClick={handleBack} className="inline-flex h-11 items-center rounded-[12px] border border-cream/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:border-cream/60 transition-colors">
                       Back
                     </button>
                   )}
                 </div>
                 {step < 3 ? (
-                  <button type="button" onClick={handleNext} disabled={!currentValid} className="inline-flex h-11 items-center rounded-[12px] bg-burgundy px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:bg-burgundy-deep transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                  <button type="button" onClick={handleNext} disabled={!currentValid} className="inline-flex h-11 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy-deep hover:bg-cream/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                     Next
                   </button>
                 ) : (
-                  <button type="submit" disabled={!canSubmit || submitting} className="inline-flex h-11 items-center rounded-[12px] bg-burgundy px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:bg-burgundy-deep transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                  <button type="submit" disabled={!canSubmit || submitting} className="inline-flex h-11 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy-deep hover:bg-cream/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                     {submitting ? "Submitting…" : "Submit application"}
                   </button>
                 )}
@@ -529,23 +530,23 @@ function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: b
             </form>
           </>
         ) : (
-          <div className="py-6 text-center">
-            <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-burgundy text-cream">
-              <CheckCircle2 className="h-7 w-7" />
+          <div className="py-10 text-center">
+            <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full border border-gold/50 bg-gold/10 text-gold">
+              <CheckCircle2 className="h-6 w-6" />
             </div>
             <DialogHeader className="text-center">
-              <DialogTitle className="mt-6 font-display font-bold text-3xl lowercase tracking-[-0.02em] text-ink">
+              <DialogTitle className="mt-6 font-display font-bold text-4xl lowercase tracking-[-0.02em] text-cream text-center">
                 thank you.
               </DialogTitle>
-              <DialogDescription className="text-ink/70 text-[15px] leading-relaxed pt-2">
+              <DialogDescription className="text-cream/65 text-[14px] leading-relaxed pt-3 max-w-sm mx-auto text-center">
                 Your application is with us. We read every one — expect a reply inside 48 hours.
               </DialogDescription>
             </DialogHeader>
             <div className="mt-8 flex justify-center gap-3 flex-wrap">
-              <Link href="/chef-handbook" onClick={() => handleOpenChange(false)} className="inline-flex h-11 items-center rounded-[12px] border border-ink/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-ink hover:border-ink/60 transition-colors">
+              <Link href="/chef-handbook" onClick={() => handleOpenChange(false)} className="inline-flex h-11 items-center rounded-[12px] border border-cream/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:border-cream/60 transition-colors">
                 Read the handbook
               </Link>
-              <button onClick={() => handleOpenChange(false)} className="inline-flex h-11 items-center rounded-[12px] bg-burgundy px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:bg-burgundy-deep transition-colors">
+              <button onClick={() => handleOpenChange(false)} className="inline-flex h-11 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy-deep hover:bg-cream/90 transition-colors">
                 Close
               </button>
             </div>
@@ -562,9 +563,9 @@ type StepProps = {
   showErrors: boolean;
 };
 
-const inputCls = "mt-2 h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40";
-const labelCls = "label text-ink/60";
-const errCls = "mt-1 text-[11px] text-red-700";
+const inputCls = "mt-2 h-11 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40 focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/20";
+const labelCls = "label text-cream/60";
+const errCls = "mt-1 text-[11px] text-gold";
 
 function Step1({ f, set, showErrors }: StepProps) {
   return (
@@ -592,7 +593,7 @@ function Step1({ f, set, showErrors }: StepProps) {
       <div>
         <Label className={labelCls}>Willing to travel</Label>
         <Select value={f.travel} onValueChange={(v) => set("travel", v)}>
-          <SelectTrigger className={`${inputCls} data-[placeholder]:text-ink/40`}>
+          <SelectTrigger className={`${inputCls} data-[placeholder]:text-cream/40`}>
             <SelectValue placeholder="Select radius" />
           </SelectTrigger>
           <SelectContent className="bg-cream text-ink border-ink/15">
@@ -604,7 +605,7 @@ function Step1({ f, set, showErrors }: StepProps) {
         {showErrors && !f.travel && <p className={errCls}>Choose a travel radius.</p>}
       </div>
       <div className="col-span-2">
-        <Label htmlFor="ap-url" className={labelCls}>Instagram / portfolio / website <span className="text-ink/40">(optional)</span></Label>
+        <Label htmlFor="ap-url" className={labelCls}>Instagram / portfolio / website <span className="text-cream/40">(optional)</span></Label>
         <Input id="ap-url" type="url" value={f.url} onChange={(e) => set("url", e.target.value)} placeholder="https://instagram.com/yourhandle" className={inputCls} />
         {showErrors && !urlOk(f.url) && <p className={errCls}>Enter a valid URL, or leave blank.</p>}
       </div>
@@ -631,7 +632,7 @@ function Step2({ f, set, showErrors }: StepProps) {
       <div>
         <Label className={labelCls}>Years of experience</Label>
         <Select value={f.years} onValueChange={(v) => set("years", v)}>
-          <SelectTrigger className={`${inputCls} data-[placeholder]:text-ink/40`}>
+          <SelectTrigger className={`${inputCls} data-[placeholder]:text-cream/40`}>
             <SelectValue placeholder="Select range" />
           </SelectTrigger>
           <SelectContent className="bg-cream text-ink border-ink/15">
@@ -646,7 +647,7 @@ function Step2({ f, set, showErrors }: StepProps) {
         <Label className={labelCls}>Do you offer custom menus?</Label>
         <div className="mt-2 flex gap-2">
           {(["yes", "no"] as const).map((v) => (
-            <button key={v} type="button" onClick={() => set("offersCustomMenu", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.offersCustomMenu === v ? "border-burgundy bg-burgundy text-cream" : "border-ink/20 text-ink hover:border-ink/50"}`}>
+            <button key={v} type="button" onClick={() => set("offersCustomMenu", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.offersCustomMenu === v ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
               {v}
             </button>
           ))}
@@ -654,29 +655,29 @@ function Step2({ f, set, showErrors }: StepProps) {
         {showErrors && !f.offersCustomMenu && <p className={errCls}>Choose yes or no.</p>}
       </div>
       <div className="col-span-2">
-        <Label htmlFor="ap-headline" className={labelCls}>One-line headline <span className="text-ink/40">({f.headline.length}/90)</span></Label>
+        <Label htmlFor="ap-headline" className={labelCls}>One-line headline <span className="text-cream/40">({f.headline.length}/90)</span></Label>
         <Input id="ap-headline" value={f.headline} maxLength={90} onChange={(e) => set("headline", e.target.value)} placeholder="Roman pasta and long, unhurried evenings." className={inputCls} />
         {showErrors && f.headline.trim().length < 4 && <p className={errCls}>Write a short headline.</p>}
       </div>
       <div className="col-span-2">
-        <Label htmlFor="ap-bio" className={labelCls}>Short bio <span className="text-ink/40">(min 120 chars — {f.bio.length})</span></Label>
-        <Textarea id="ap-bio" value={f.bio} onChange={(e) => set("bio", e.target.value)} rows={4} placeholder="Where you trained, how you cook, what you'd bring to a private table…" className="mt-2 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+        <Label htmlFor="ap-bio" className={labelCls}>Short bio <span className="text-cream/40">(min 120 chars — {f.bio.length})</span></Label>
+        <Textarea id="ap-bio" value={f.bio} onChange={(e) => set("bio", e.target.value)} rows={4} placeholder="Where you trained, how you cook, what you'd bring to a private table…" className="mt-2 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
         {showErrors && f.bio.trim().length < 120 && <p className={errCls}>Please write at least 120 characters.</p>}
       </div>
 
       <div className="col-span-2">
         <div className="flex items-center justify-between">
           <Label className={labelCls}>Signature dishes ({f.signatureDishes.length}/5)</Label>
-          <button type="button" onClick={addDish} disabled={f.signatureDishes.length >= 5} className="text-[11px] font-mono uppercase tracking-[0.14em] text-burgundy hover:text-burgundy-deep disabled:opacity-40 disabled:cursor-not-allowed">
+          <button type="button" onClick={addDish} disabled={f.signatureDishes.length >= 5} className="text-[11px] font-mono uppercase tracking-[0.14em] text-gold hover:text-gold/80 disabled:opacity-40 disabled:cursor-not-allowed">
             + Add dish
           </button>
         </div>
         <div className="mt-2 space-y-2">
           {f.signatureDishes.map((d, i) => (
             <div key={i} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 items-start">
-              <Input value={d.name} onChange={(e) => setDish(i, { name: e.target.value })} placeholder={`Dish ${i + 1} name`} className="h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
-              <Input value={d.note} onChange={(e) => setDish(i, { note: e.target.value })} placeholder="Short note (optional)" className="h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
-              <button type="button" onClick={() => removeDish(i)} disabled={f.signatureDishes.length <= 1} className="h-11 px-3 text-[11px] font-mono uppercase tracking-[0.14em] text-ink/60 hover:text-ink disabled:opacity-30 disabled:cursor-not-allowed">
+              <Input value={d.name} onChange={(e) => setDish(i, { name: e.target.value })} placeholder={`Dish ${i + 1} name`} className="h-11 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
+              <Input value={d.note} onChange={(e) => setDish(i, { note: e.target.value })} placeholder="Short note (optional)" className="h-11 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
+              <button type="button" onClick={() => removeDish(i)} disabled={f.signatureDishes.length <= 1} className="h-11 px-3 text-[11px] font-mono uppercase tracking-[0.14em] text-cream/60 hover:text-cream disabled:opacity-30 disabled:cursor-not-allowed">
                 Remove
               </button>
             </div>
@@ -685,8 +686,8 @@ function Step2({ f, set, showErrors }: StepProps) {
         {showErrors && f.signatureDishes.filter((d) => d.name.trim()).length < 1 && <p className={errCls}>Add at least one signature dish.</p>}
       </div>
 
-      <div className="col-span-2 rounded-[12px] border border-ink/15 bg-white p-4">
-        <div className="label text-ink/50">A sample package</div>
+      <div className="col-span-2 rounded-[12px] border border-cream/10 bg-cream/[0.04] p-4">
+        <div className="label text-cream/50">A sample package</div>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <div className="col-span-2">
             <Label htmlFor="pkg-name" className={labelCls}>Package name</Label>
@@ -702,7 +703,7 @@ function Step2({ f, set, showErrors }: StepProps) {
           </div>
           <div className="col-span-2">
             <Label htmlFor="pkg-inc" className={labelCls}>What's included</Label>
-            <Textarea id="pkg-inc" rows={2} value={f.sample.inclusions} onChange={(e) => setSample({ inclusions: e.target.value })} placeholder="4 courses, wine pairing notes, full cleanup" className="mt-2 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+            <Textarea id="pkg-inc" rows={2} value={f.sample.inclusions} onChange={(e) => setSample({ inclusions: e.target.value })} placeholder="4 courses, wine pairing notes, full cleanup" className="mt-2 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
           </div>
         </div>
         {showErrors && (!f.sample.name || !f.sample.courses || !f.sample.price || !f.sample.inclusions) && (
@@ -744,7 +745,7 @@ function Step3({ f, set, showErrors }: StepProps) {
           <div className="min-h-[2.25rem] flex items-end mb-1">
             <Label className={labelCls}>Profile photo</Label>
           </div>
-          <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-ink/30 bg-white px-4 text-[12px] text-ink/70 hover:border-ink/60 cursor-pointer">
+          <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-cream/25 bg-cream/[0.04] px-4 text-[12px] text-cream/70 hover:border-cream/60 cursor-pointer">
             <span className="truncate">{f.portraitName || "Choose an image (JPG/PNG/WEBP, ≤10MB)"}</span>
             <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onPortrait} />
           </label>
@@ -753,9 +754,9 @@ function Step3({ f, set, showErrors }: StepProps) {
         </div>
         <div className="flex flex-col justify-end">
           <div className="min-h-[2.25rem] flex items-end mb-1">
-            <Label className={labelCls}>Food & plating photos <span className="text-ink/40">(optional, up to 6)</span></Label>
+            <Label className={labelCls}>Food & plating photos <span className="text-cream/40">(optional, up to 6)</span></Label>
           </div>
-          <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-ink/30 bg-white px-4 text-[12px] text-ink/70 hover:border-ink/60 cursor-pointer">
+          <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-cream/25 bg-cream/[0.04] px-4 text-[12px] text-cream/70 hover:border-cream/60 cursor-pointer">
             <span className="truncate">{f.galleryNames.length ? `${f.galleryNames.length} file(s) added` : "Add photos"}</span>
             <input type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" onChange={onGallery} />
           </label>
@@ -768,14 +769,14 @@ function Step3({ f, set, showErrors }: StepProps) {
         <Label className={labelCls}>Food-safety / food-handler certification</Label>
         <div className="mt-2 flex gap-2">
           {(["yes", "no"] as const).map((v) => (
-            <button key={v} type="button" onClick={() => set("hasFoodSafety", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.hasFoodSafety === v ? "border-burgundy bg-burgundy text-cream" : "border-ink/20 text-ink hover:border-ink/50"}`}>
+            <button key={v} type="button" onClick={() => set("hasFoodSafety", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.hasFoodSafety === v ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
               {v}
             </button>
           ))}
         </div>
         {f.hasFoodSafety === "yes" && (
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-ink/30 bg-white px-4 text-[12px] text-ink/70 hover:border-ink/60 cursor-pointer">
+            <label className="flex h-11 items-center justify-between rounded-[12px] border border-dashed border-cream/25 bg-cream/[0.04] px-4 text-[12px] text-cream/70 hover:border-cream/60 cursor-pointer">
               <span className="truncate">{f.foodSafetyCertName || "Upload certificate (optional)"}</span>
               <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => set("foodSafetyCertName", e.target.files?.[0]?.name ?? "")} />
             </label>
@@ -788,14 +789,14 @@ function Step3({ f, set, showErrors }: StepProps) {
       {/* Background */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
-          <Label htmlFor="ap-bg" className={labelCls}>Professional background <span className="text-ink/40">(optional)</span></Label>
-          <Textarea id="ap-bg" value={f.background} onChange={(e) => set("background", e.target.value)} rows={3} placeholder="Restaurants, training, awards…" className="mt-2 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+          <Label htmlFor="ap-bg" className={labelCls}>Professional background <span className="text-cream/40">(optional)</span></Label>
+          <Textarea id="ap-bg" value={f.background} onChange={(e) => set("background", e.target.value)} rows={3} placeholder="Restaurants, training, awards…" className="mt-2 bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40" />
         </div>
         <div className="flex flex-col justify-end">
           <div className="min-h-[2.25rem] flex items-end mb-1">
-            <Label htmlFor="ap-biz" className={labelCls}>Business / LLC name <span className="text-ink/40">(optional)</span></Label>
+            <Label htmlFor="ap-biz" className={labelCls}>Business / LLC name <span className="text-cream/40">(optional)</span></Label>
           </div>
-          <Input id="ap-biz" value={f.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder="Your kitchen, LLC" className="h-11 bg-white border-ink/20 text-ink placeholder:text-ink/40" />
+          <Input id="ap-biz" value={f.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder="Your kitchen, LLC" className={inputCls} />
         </div>
         <div className="flex flex-col justify-end">
           <div className="min-h-[2.25rem] flex items-end mb-1">
@@ -803,7 +804,7 @@ function Step3({ f, set, showErrors }: StepProps) {
           </div>
           <div className="flex gap-2">
             {(["yes", "no"] as const).map((v) => (
-              <button key={v} type="button" onClick={() => set("hasInsurance", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.hasInsurance === v ? "border-burgundy bg-burgundy text-cream" : "border-ink/20 text-ink hover:border-ink/50"}`}>
+              <button key={v} type="button" onClick={() => set("hasInsurance", v)} className={`h-11 flex-1 rounded-[12px] border px-4 text-[12px] font-mono uppercase tracking-[0.14em] transition-colors ${f.hasInsurance === v ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
                 {v}
               </button>
             ))}
@@ -819,7 +820,7 @@ function Step3({ f, set, showErrors }: StepProps) {
           {EQUIPMENT_REQUIREMENTS.map((eq) => {
             const on = f.equipment.includes(eq);
             return (
-              <button key={eq} type="button" onClick={() => set("equipment", toggle(f.equipment, eq))} className={`rounded-[10px] border px-3 py-2 text-[11px] font-mono uppercase tracking-[0.14em] transition-colors ${on ? "border-burgundy bg-burgundy text-cream" : "border-ink/20 text-ink hover:border-ink/50"}`}>
+              <button key={eq} type="button" onClick={() => set("equipment", toggle(f.equipment, eq))} className={`rounded-[10px] border px-3 py-2 text-[11px] font-mono uppercase tracking-[0.14em] transition-colors ${on ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
                 {eq}
               </button>
             );
@@ -836,7 +837,7 @@ function Step3({ f, set, showErrors }: StepProps) {
             {DAYS.map((d) => {
               const on = f.availabilityDays.includes(d);
               return (
-                <button key={d} type="button" onClick={() => set("availabilityDays", toggle(f.availabilityDays, d))} className={`h-10 min-w-[52px] rounded-[10px] border px-3 text-[12px] font-mono uppercase tracking-[0.12em] transition-colors ${on ? "border-burgundy bg-burgundy text-cream" : "border-ink/20 text-ink hover:border-ink/50"}`}>
+                <button key={d} type="button" onClick={() => set("availabilityDays", toggle(f.availabilityDays, d))} className={`h-10 min-w-[52px] rounded-[10px] border px-3 text-[12px] font-mono uppercase tracking-[0.12em] transition-colors ${on ? "border-gold bg-gold text-burgundy-deep" : "border-cream/20 text-cream hover:border-cream/50"}`}>
                   {d}
                 </button>
               );
@@ -847,7 +848,7 @@ function Step3({ f, set, showErrors }: StepProps) {
         <div>
           <Label className={labelCls}>Typical lead time</Label>
           <Select value={f.leadTime} onValueChange={(v) => set("leadTime", v)}>
-            <SelectTrigger className={`${inputCls} data-[placeholder]:text-ink/40`}>
+            <SelectTrigger className={`${inputCls} data-[placeholder]:text-cream/40`}>
               <SelectValue placeholder="Select lead time" />
             </SelectTrigger>
             <SelectContent className="bg-cream text-ink border-ink/15">
@@ -861,14 +862,44 @@ function Step3({ f, set, showErrors }: StepProps) {
       </div>
 
       {/* Agreements */}
-      <div className="space-y-3 rounded-[12px] border border-ink/15 bg-white p-4">
-        <label className="flex items-start gap-3 text-[13px] text-ink leading-relaxed cursor-pointer">
-          <input type="checkbox" checked={f.pledge} onChange={(e) => set("pledge", e.target.checked)} className="mt-1 h-4 w-4 accent-burgundy" />
-          <span>I agree to serve every client with professionalism, maintain food-safety standards, and represent Love at First Sight with excellence.</span>
+      <div className="space-y-3 rounded-[12px] border border-cream/10 bg-cream/[0.04] p-4">
+        <label className="flex items-start gap-3 text-[13px] text-cream/80 leading-relaxed cursor-pointer group">
+          <button
+            type="button"
+            role="checkbox"
+            aria-checked={f.pledge}
+            onClick={() => set("pledge", !f.pledge)}
+            className={cn(
+              "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] border transition-all duration-200 cursor-pointer",
+              f.pledge
+                ? "border-gold bg-gold text-burgundy-deep shadow-sm"
+                : "border-cream/30 bg-cream/[0.06] hover:border-gold/60 text-transparent"
+            )}
+          >
+            <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+          </button>
+          <span className="select-none group-hover:text-cream transition-colors">
+            I agree to serve every client with professionalism, maintain food-safety standards, and represent Love at First Sight with excellence.
+          </span>
         </label>
-        <label className="flex items-start gap-3 text-[13px] text-ink leading-relaxed cursor-pointer">
-          <input type="checkbox" checked={f.consent} onChange={(e) => set("consent", e.target.checked)} className="mt-1 h-4 w-4 accent-burgundy" />
-          <span>I consent to being contacted about my application.</span>
+        <label className="flex items-start gap-3 text-[13px] text-cream/80 leading-relaxed cursor-pointer group">
+          <button
+            type="button"
+            role="checkbox"
+            aria-checked={f.consent}
+            onClick={() => set("consent", !f.consent)}
+            className={cn(
+              "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] border transition-all duration-200 cursor-pointer",
+              f.consent
+                ? "border-gold bg-gold text-burgundy-deep shadow-sm"
+                : "border-cream/30 bg-cream/[0.06] hover:border-gold/60 text-transparent"
+            )}
+          >
+            <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+          </button>
+          <span className="select-none group-hover:text-cream transition-colors">
+            I consent to being contacted about my application.
+          </span>
         </label>
         {showErrors && (!f.pledge || !f.consent) && <p className={errCls}>Both checkboxes are required.</p>}
       </div>

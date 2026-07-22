@@ -116,3 +116,23 @@ lafs-next/
 - **Dark Ink**: `#1A1614` (`--ink`)
 - **Gold Accent**: `#C9A961` (`--gold`)
 - **Cursor Classes**: `.cursor-none-root` (candlelit cursor) & `.cursor-native` (default system cursor over paper cards & modals).
+
+---
+
+## 5. Latest Commit Synchronization (Commit `7b7ec4f`)
+
+1. **Typography & Styling**:
+   - Added **Cormorant Garamond** font stylesheet and `--font-serif` CSS variable.
+   - Added `@utility font-serif` utility rule in `app/globals.css`.
+
+2. **FAQ Page Update**:
+   - Added new FAQ question & answer regarding kitchen equipment quotes (`"what if my kitchen needs extra equipment?"`).
+
+3. **Chef Application Modal Redesign**:
+   - Redesigned `ApplicationDialog` in `app/for-chefs/page.client.tsx` to match the dark burgundy deep modal theme canvas (`bg-burgundy-deep text-cream border-cream/10`).
+   - Updated form controls (`bg-cream/[0.04] border-cream/20 text-cream placeholder:text-cream/40`), active toggles (`border-gold bg-gold text-burgundy-deep`), upload dropzones (`border-cream/25 bg-cream/[0.04] text-cream/70`), and checkbox cards to dark transparent cream styling.
+
+4. **Booking Flow Post-Payment Screen**:
+   - Replaced post-payment `SuccessDialog` modal popover with full-page `SuccessScreen` rendered directly on the dark burgundy page canvas (`text-cream`).
+   - Displays booking request ID header (`Love at First Sight | #booking-id`), title (`a table, held for you.`), chef confirmation note, gold star divider, 2-column metadata breakdown (`MetaBlock` for guest name, occasion, date, arrival, menu, courses, chef, total price), and navigation buttons (`back to chefs`, `open dashboard →`).
+
