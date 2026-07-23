@@ -5,6 +5,9 @@ import {
   Section,
 } from "@/components/ui-lafs";
 import { ABOUT_CONTENT } from "@/data/site-content";
+import { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Our Story — Love at First Sight", description: "The story of Love at First Sight"}
 
 const IMG = (id: string, w = 1600) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
