@@ -7,7 +7,7 @@ import {
 } from "@/components/ui-lafs";
 import { Metadata } from "next";
 
-export const metadata: Metadata = { title: 'Love at First Sight — Gallery', description: 'A slow scroll through the evenings people wrote us about afterward — the candles, the plates, the long pauses between them.' };
+export const metadata: Metadata = { title: 'Gallery — Love at First Sight', description: 'A slow scroll through the evenings people wrote us about afterward — the candles, the plates, the long pauses between them.' };
 
 const IMG = (id: string, w = 1600) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;

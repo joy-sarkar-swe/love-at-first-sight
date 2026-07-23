@@ -1,5 +1,8 @@
 import { Accordion, CinematicHero, Reveal, Section } from "@/components/ui-lafs";
 import { CHEF_FAQ } from "@/data/site-content";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'FAQ — Love at First Sight', description: 'Frequently asked questions about booking a private chef.' };
 
 const IMG = (id: string, w = 1800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;

@@ -505,21 +505,21 @@ function ApplicationDialog({ open, setOpen, submitted, setSubmitted }: { open: b
 
               <DialogFooter className="mt-8 gap-3 sm:justify-between pt-6 border-t border-cream/10">
                 <div className="flex gap-3">
-                  <button type="button" onClick={() => handleOpenChange(false)} className="inline-flex h-11 items-center rounded-[12px] border border-cream/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-cream/70 hover:border-cream/60 transition-colors">
+                  <button type="button" onClick={() => handleOpenChange(false)} className="inline-flex h-11 items-center rounded-[12px] border border-cream/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-cream/70 hover:border-cream/60 transition-colors cursor-pointer">
                     Cancel
                   </button>
                   {step > 1 && (
-                    <button type="button" onClick={handleBack} className="inline-flex h-11 items-center rounded-[12px] border border-cream/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:border-cream/60 transition-colors">
+                    <button type="button" onClick={handleBack} className="inline-flex h-11 items-center rounded-[12px] border border-cream/25 px-5 text-[12px] font-mono uppercase tracking-[0.14em] text-cream hover:border-cream/60 transition-colors cursor-pointer">
                       Back
                     </button>
                   )}
                 </div>
                 {step < 3 ? (
-                  <button type="button" onClick={handleNext} disabled={!currentValid} className="inline-flex h-11 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy-deep hover:bg-cream/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                  <button type="button" onClick={handleNext} disabled={!currentValid} className="inline-flex h-11 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy-deep hover:bg-cream/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
                     Next
                   </button>
                 ) : (
-                  <button type="submit" disabled={!canSubmit || submitting} className="inline-flex h-11 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy-deep hover:bg-cream/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                  <button type="submit" disabled={!canSubmit || submitting} className="inline-flex h-11 items-center rounded-[12px] bg-cream px-6 text-[12px] font-mono uppercase tracking-[0.14em] text-burgundy-deep hover:bg-cream/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
                     {submitting ? "Submitting…" : "Submit application"}
                   </button>
                 )}

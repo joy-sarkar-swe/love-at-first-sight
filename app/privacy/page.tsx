@@ -1,7 +1,7 @@
 import { CinematicHero, Reveal, Section } from "@/components/ui-lafs";
 import { Metadata } from "next";
 
-export const metadata: Metadata = { title: 'Love at First Sight — Privacy Policy', description: 'Your privacy is important to us. Read our policy for more information.' };
+export const metadata: Metadata = { title: 'Privacy Policy — Love at First Sight', description: 'Your privacy is important to us. Read our policy for more information.' };
 
 const IMG = (id: string, w = 1800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
